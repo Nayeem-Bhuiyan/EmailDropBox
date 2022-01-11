@@ -21,7 +21,7 @@ namespace DropBoxTest.Controllers
 
         public async Task<IActionResult> Index()
         {
-             string token = "sl.A_4xJY0xOokqLVoXEA7uz_KnliAjEXkTV8BhffcAxktHuRTSPyIGAzIvQpo35TiNDT21kmbgpUY8Ga4qkVklU7D4i34n85x-0P8Wm86tUiAYeqhi1fwZSV0AyH7hmtAEytTmr1w";
+             string token = "sl.A_7zSU1dpe5eBiEq6gXvczEg4mnR8jkXJFXJzK1rMUDkMIRySn0mKiQO_W340LbOPAEZoKr8SIx6ybp5imjqiSjgJa5GOcbY7yZYgvAsTOuwM5arU3m1mnD4-nrap9YIrW-E8v4";
             UserDetails data = new UserDetails();
             using (var dbx = new DropboxClient(token))
             {
