@@ -1,0 +1,33 @@
+﻿@model UserDetails
+@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Country</th>
+                    <th>Image</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model?.userName</td>
+                    <td>@Model?.email</td>
+                    <td>@Model?.country</td>
+                    @if (Model?.profileImageUrl != null)
+                    {
+                      <td><img src="@Model?.profileImageUrl" /></td>
+                    }
+                    else
+                    {
+                        <td><img src="~/DefaultImage/download.png" /></td>
+                    }
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
