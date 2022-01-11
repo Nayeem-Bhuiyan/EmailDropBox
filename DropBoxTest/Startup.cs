@@ -193,7 +193,7 @@ namespace DropBoxTest
             app.UseMvc(routes => {
                 routes.MapRoute(
                 name: "MyArea",
-                template: "{area=Auth}/{controller=Account}/{action=Login}/{id?}");
+                template: "{area=exists}/{controller=Account}/{action=Login}/{id?}");
 
                 routes.MapRoute(
                     name: "default",
