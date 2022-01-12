@@ -18,30 +18,31 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
     [Area("DropboxInfo")]
     public class DropboxController : Controller
     {
+
         public async Task<IActionResult> FolderList()
         {
             List<FolderDetails> listFolder = new List<FolderDetails>();
+
             string token = "sl.A_-b6-CkQgOwqnM71H5Ik79wl5XZ4JxW06VN8eL6Mm8bo6V3MLrm8CGgnLXf-DYi_I5WKtSM4JIK36y75wddpjWQcDufnOcc68p47F6N8GEh3tEgfMK9t-phhuEDZ-sQi6k_3Eo";
-            using (var dbx = new DropboxClient(token))
+            using (var client = new DropboxClient(token))
             {
-                var list = await dbx.Files.ListFolderAsync(string.Empty, true);
+                var list = await client.Files.ListFolderAsync(string.Empty, true);
+                var folders = list.Entries.Where(x => x.IsFolder);
                 var files = list.Entries.Where(x => x.IsFile);
-
-                foreach (var file in files)
+                
+                foreach (var folder in folders)
                 {
-
-                    var currentPath = Path.GetFullPath(file.Name);
-                    currentPath = Directory.GetParent(currentPath).FullName;
-
 
                     FolderDetails data = new FolderDetails
                     {
-                        folderName = file.Name,
-                        folderPath = file.PathDisplay,
-                        //downloadLink= "https://www.dropbox.com/home"+file.PathDisplay
-                        downloadLink= "https://www.dropbox.com/home" + currentPath
+                        folderName = folder.Name,
+                        folderPath = folder.PathDisplay,
+                        downloadLink = "https://www.dropbox.com/home" + folder.PathDisplay,
+                        count = files.Count()
+
                     };
                     listFolder.Add(data);
+
                 }
             }
             return View(listFolder);
@@ -49,13 +50,56 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         }
 
 
-            public async Task<IActionResult> DropboxUserInfo()
+        //public async Task<IActionResult> FolderList()
+        //{
+        //    List<FolderDetails> listFolder = new List<FolderDetails>();
+
+        //    string token = "sl.A_-b6-CkQgOwqnM71H5Ik79wl5XZ4JxW06VN8eL6Mm8bo6V3MLrm8CGgnLXf-DYi_I5WKtSM4JIK36y75wddpjWQcDufnOcc68p47F6N8GEh3tEgfMK9t-phhuEDZ-sQi6k_3Eo";
+        //    using (var client = new DropboxClient(token))
+        //    {
+        //        var list = await client.Files.ListFolderAsync(string.Empty, true);
+        //        var folders = list.Entries.Where(x => x.IsFolder);
+        //        foreach (var folder in folders)
+        //        {
+        //            List<FileDetails> listFile = new List<FileDetails>();
+        //            var fileList=   list.Entries.Where(x=>x.IsFile);
+
+        //            foreach (var file in fileList)
+        //            {
+        //                FileDetails filedata = new FileDetails
+        //                {
+        //                    fileName = file.Name,
+        //                    filePath = file.PathDisplay,
+        //                    fileDownloadLink = "https://www.dropbox.com/home" + file.PathDisplay
+        //                };
+        //                listFile.Add(filedata);
+        //            }
+        //            FolderDetails data = new FolderDetails
+        //            {
+        //                folderName = folder.Name,
+        //                folderPath = folder.PathDisplay,
+        //                downloadLink= "https://www.dropbox.com/home"+ folder.PathDisplay,
+        //                fileDetails= listFile,
+
+        //            };
+        //            listFolder.Add(data);
+
+        //        }
+        //    }
+        //    return View(listFolder);
+
+        //}
+
+
+        public async Task<IActionResult> DropboxUserInfo()
             {
                 string token = "sl.A_-b6-CkQgOwqnM71H5Ik79wl5XZ4JxW06VN8eL6Mm8bo6V3MLrm8CGgnLXf-DYi_I5WKtSM4JIK36y75wddpjWQcDufnOcc68p47F6N8GEh3tEgfMK9t-phhuEDZ-sQi6k_3Eo";
                 UserDetails data = new UserDetails();
-                using (var dbx = new DropboxClient(token))
+            
+            using (var dbx = new DropboxClient(token))
                 {
-                    var user = await dbx.Users.GetCurrentAccountAsync();
+
+                var user = await dbx.Users.GetCurrentAccountAsync();
                     data = new UserDetails
                     {
                         userName = user.Name?.DisplayName,
@@ -66,5 +110,12 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
                 }
                 return View(data);
             }
+
+
+
+  
+
+
+
     }
 }

@@ -8,9 +8,10 @@
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>File Name</th>
-                    <th>File Path</th>
-                    <th>Action</th>
+                    <th>Folder Name</th>
+                    <th>Folder Path</th>
+                    <th>File Count</th>
+                    <th>Download Link</th>
                 </tr>
             </thead>
             <tbody>
@@ -18,11 +19,19 @@
                   
                     @foreach (var item in Model)
                     {
-                        <tr>
-                            <td>@item.folderName</td>
-                            <td>@item.folderPath</td>
-                            <td><a href="@item.downloadLink" class="btn btn-primary" download>Download</a></td>
-                        </tr>
+                <tr>
+                    <td>@item.folderName</td>
+                    <td>@item.folderPath</td>
+
+                    <td>
+                        @*@foreach (var file in item.fileDetails)
+            {
+               <span>@file.fileDownloadLink</span>
+            }*@
+                        @item.count
+                    </td>
+                    <td><a href="@item.downloadLink" class="btn btn-primary" download>Download</a></td>
+                </tr>
                     }
                 
             </tbody>
