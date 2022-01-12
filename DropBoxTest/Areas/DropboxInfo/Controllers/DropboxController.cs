@@ -37,7 +37,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
                     listFolder.Add(data);
                 }
             }
-            return View(listFolder.);
+            return View(listFolder);
         }
 
 
