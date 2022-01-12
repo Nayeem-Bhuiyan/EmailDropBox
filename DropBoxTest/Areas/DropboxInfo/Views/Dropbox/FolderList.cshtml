@@ -8,18 +8,23 @@
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>Folder Name</th>
-                    <th>Folder Path</th>
+                    <th>File Name</th>
+                    <th>File Path</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.folderName</td>
-                        <td>@item.folderPath</td>
-                    </tr>
-                }
+               
+                  
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.folderName</td>
+                            <td>@item.folderPath</td>
+                            <td><a href="@item.downloadLink" class="btn btn-primary" download>Download</a></td>
+                        </tr>
+                    }
+                
             </tbody>
         </table>
     </div>

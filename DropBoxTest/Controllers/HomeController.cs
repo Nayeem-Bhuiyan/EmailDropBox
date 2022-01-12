@@ -29,7 +29,7 @@ namespace DropBoxTest.Controllers
         public async Task<IActionResult> Index()
         {
 
-            string token = "sl.A_8TrrTIdb5xcIFbbJjetCg6va35Xp_Eqv-aYrPQ5ZwMwgepwbAnkBHEqDhmI36Xcvm1R7j_odN5KjU1VeZ7kdG0wQd2KuIsAd3-ljwg903mGU6hsbMnzQ3fnRw7aeISqyfRpvg";
+            string token = "sl.A_-b6-CkQgOwqnM71H5Ik79wl5XZ4JxW06VN8eL6Mm8bo6V3MLrm8CGgnLXf-DYi_I5WKtSM4JIK36y75wddpjWQcDufnOcc68p47F6N8GEh3tEgfMK9t-phhuEDZ-sQi6k_3Eo";
             UserDetails data = new UserDetails();
             using (var dbx = new DropboxClient(token))
             {
@@ -50,28 +50,6 @@ namespace DropBoxTest.Controllers
         }
 
 
-        //public async Task<IActionResult> Download()
-        //{
-        //    string token = "sl.A_7zSU1dpe5eBiEq6gXvczEg4mnR8jkXJFXJzK1rMUDkMIRySn0mKiQO_W340LbOPAEZoKr8SIx6ybp5imjqiSjgJa5GOcbY7yZYgvAsTOuwM5arU3m1mnD4-nrap9YIrW-E8v4";
-        //    using (var dbx = new DropboxClient(token))
-        //    {
-               
-        //        string folder = "";
-        //        string file = "full-file-name";
-        //        using (var response = await dbx.Files.DownloadAsync(folder + "/" + file))
-        //        {
-        //            var s = response.GetContentAsByteArrayAsync();
-        //            s.Wait();
-        //            var d = s.Result;
-        //           //File.WriteAllBytes(file, d);
-
-        //            //byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
-
-        //            //return File(fileBytes, "application/force-download", fileName);
-        //        }
-        //    }
-
-        //}
 
         //public async Task<IEnumerable<UploadedImageDetails>> UploadedImageInfo(this DropboxClient client)
         //{

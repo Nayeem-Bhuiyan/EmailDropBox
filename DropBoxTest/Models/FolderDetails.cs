@@ -9,5 +9,6 @@ namespace DropBoxTest.Models
     {
         public string folderName { get; set; }
         public string folderPath { get; set; }
+        public string downloadLink { get; set; }
     }
 }
