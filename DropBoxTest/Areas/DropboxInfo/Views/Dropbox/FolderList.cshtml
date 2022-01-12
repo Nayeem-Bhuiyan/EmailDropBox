@@ -1,0 +1,27 @@
+﻿@model IEnumerable<FolderDetails>
+@{
+    ViewData["Title"] = "FolderList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Folder Name</th>
+                    <th>Folder Path</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.folderName</td>
+                        <td>@item.folderPath</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

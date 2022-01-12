@@ -25,6 +25,8 @@
     <Folder Include="Areas\Auth\Data\" />
     <Folder Include="Areas\Auth\Models\" />
     <Folder Include="Areas\Auth\Views\" />
+    <Folder Include="Areas\DropboxInfo\Data\" />
+    <Folder Include="Areas\DropboxInfo\Models\" />
     <Folder Include="Areas\EmailInfo\Data\" />
   </ItemGroup>
 
