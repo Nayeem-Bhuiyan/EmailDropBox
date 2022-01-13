@@ -21,14 +21,14 @@
             {
                 <div class="card-footer bg-success text-white">
                     @Model.successResponse
-                    <a href="@Model.redirectFolder" class="btn btn-warning" target="_blank">Click</a>
+                    <a href="@Model.redirectFolder" class="btn btn-warning" target="_blank">GO</a>
                 </div>
             }
             @if (Model.errorResponse != null)
             {
         <div class="card-footer bg-danger text-white">
             @Model.errorResponse
-            <a href="@Model.redirectFolder" class="btn btn-warning" target="_blank">Click</a>
+            <a href="@Model.redirectFolder" class="btn btn-warning" target="_blank">GO</a>
         </div>
             }
             @if (Model.successResponse != null && Model.errorResponse != null)
@@ -38,6 +38,17 @@
                 </div>
             }
         </div>
+
+        <input type="file" name="fileUpload" id="fileUpload" value="" multiple/>
     </div>
 </div>
-
+@section Scripts{ 
+    <script>
+        $(document).ready(function() {
+                $('#fileUpload').on('change', function () {
+                    var filePath = $(this).val();
+                    alert(filePath);
+                });
+        })
+    </script>
+}

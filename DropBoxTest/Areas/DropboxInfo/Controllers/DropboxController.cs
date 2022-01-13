@@ -14,17 +14,16 @@ using Dropbox.Api.Files;
 using Dropbox.Api.Team;
 using DropBoxTest.Areas.DropboxInfo.Models;
 
+
 namespace DropBoxTest.Areas.DropboxInfo.Controllers
 {
     [Area("DropboxInfo")]
     public class DropboxController : Controller
     {
-
+        string token = "sl.BAAgQXyjgasV1OS-GtnmsTwVo8HiArW2Mnp2uU_qXc7xPqoV3SQv0T5DB8w5d8BXCCh0kxdnk3EDh8karZPNiePO6zHAK5WV1iIsFoKCE1s_B_0w6LXurffviIX1JWDI54l2wgA";
         public async Task<IActionResult> FolderList()
         {
             List<FolderDetails> listFolder = new List<FolderDetails>();
-
-            string token = "sl.BACeYZEpRDrUW9UhPqCyBmNVARDhnreNyrPLJT_ozc2QQR-oiEYLdk0hlunfEKhPmwjfxKq9RjOOcFq4Na1CCMl9m78PRcaHww_rPjNwM3dKU633pnZ6noxbCrnOhVpkW1f_JgI";
             using (var client = new DropboxClient(token))
             {
                 var list = await client.Files.ListFolderAsync(string.Empty, true);
@@ -50,55 +49,9 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
         }
 
-
-
-
-
-
-        //public async Task<IActionResult> FolderList()
-        //{
-        //    List<FolderDetails> listFolder = new List<FolderDetails>();
-
-        //    string token = "sl.A_-b6-CkQgOwqnM71H5Ik79wl5XZ4JxW06VN8eL6Mm8bo6V3MLrm8CGgnLXf-DYi_I5WKtSM4JIK36y75wddpjWQcDufnOcc68p47F6N8GEh3tEgfMK9t-phhuEDZ-sQi6k_3Eo";
-        //    using (var client = new DropboxClient(token))
-        //    {
-        //        var list = await client.Files.ListFolderAsync(string.Empty, true);
-        //        var folders = list.Entries.Where(x => x.IsFolder);
-        //        foreach (var folder in folders)
-        //        {
-        //            List<FileDetails> listFile = new List<FileDetails>();
-        //            var fileList=   list.Entries.Where(x=>x.IsFile);
-
-        //            foreach (var file in fileList)
-        //            {
-        //                FileDetails filedata = new FileDetails
-        //                {
-        //                    fileName = file.Name,
-        //                    filePath = file.PathDisplay,
-        //                    fileDownloadLink = "https://www.dropbox.com/home" + file.PathDisplay
-        //                };
-        //                listFile.Add(filedata);
-        //            }
-        //            FolderDetails data = new FolderDetails
-        //            {
-        //                folderName = folder.Name,
-        //                folderPath = folder.PathDisplay,
-        //                downloadLink= "https://www.dropbox.com/home"+ folder.PathDisplay,
-        //                fileDetails= listFile,
-
-        //            };
-        //            listFolder.Add(data);
-
-        //        }
-        //    }
-        //    return View(listFolder);
-
-        //}
-
-
         public async Task<IActionResult> DropboxUserInfo()
             {
-                string token = "sl.BACeYZEpRDrUW9UhPqCyBmNVARDhnreNyrPLJT_ozc2QQR-oiEYLdk0hlunfEKhPmwjfxKq9RjOOcFq4Na1CCMl9m78PRcaHww_rPjNwM3dKU633pnZ6noxbCrnOhVpkW1f_JgI";
+                
                 UserDetails data = new UserDetails();
             
             using (var dbx = new DropboxClient(token))
@@ -127,7 +80,6 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         public async Task<IActionResult> CreateFolder(CreateFolderViewModel model)
         {
         
-            string token = "sl.BACeYZEpRDrUW9UhPqCyBmNVARDhnreNyrPLJT_ozc2QQR-oiEYLdk0hlunfEKhPmwjfxKq9RjOOcFq4Na1CCMl9m78PRcaHww_rPjNwM3dKU633pnZ6noxbCrnOhVpkW1f_JgI";
             var dropBoxclient = new DropboxClient(token);
             var list = await dropBoxclient.Files.ListFolderAsync(string.Empty);
             
@@ -156,5 +108,74 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
             return View(model);
         }
+
+
+
+        public async Task<IActionResult> UploadFiles(CreateFolderViewModel model)
+        {
+            var dropboxApiToken = token;
+            var bakupFolderPath = "D:/myDropbox";
+            try
+            {
+                var dateNowString = System.DateTime.Now.ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture);
+                var backupName = $"<YOUR_DB_NAME>_db_bak{dateNowString}.sql.gz";
+                var localFilePath = Path.Combine(bakupFolderPath, backupName);
+
+                if (string.IsNullOrEmpty(localFilePath))
+                {
+                    var dbs = new DropBoxService(dropboxApiToken);
+                   
+                    await dbs.Upload(backupName, localFilePath);
+                
+                    //File.Delete(localFilePath);
+                }
+                else
+                {
+                    // WARN
+                }
+
+
+            }
+            catch (System.Exception ex)
+            {
+                while (ex.InnerException != null)
+                    ex = ex.InnerException;
+
+                // WARN
+            }
+
+            return View();
+
+        }
+
+
+
+
+        }
+
+    public class DropBoxService
+    {
+        private string ApiToken { get; set; }
+        public DropBoxService(string token)
+        {
+            ApiToken = token;
+        }
+
+        public async Task Upload(string remoteFileName, string localFilePath)
+        {
+            using (var dbx = new DropboxClient(this.ApiToken))
+            {
+                using (var fs = new FileStream(localFilePath, FileMode.Open, FileAccess.Read))
+                {
+                    await dbx.Files.UploadAsync($"/{remoteFileName}", WriteMode.Overwrite.Instance, body: fs);
+                }
+            }
+        }
     }
+
+
+
+
+
+
 }
