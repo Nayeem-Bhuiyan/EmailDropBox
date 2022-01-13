@@ -1,0 +1,43 @@
+﻿@model CreateFolderViewModel
+@{
+    ViewData["Title"] = "CreateFolder";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white text-center">
+                <h5>Create Your Dropbox Folder</h5>
+            </div>
+            <div class="card-body">
+                <form asp-area="DropboxInfo" asp-controller="Dropbox" asp-action="CreateFolder" method="post">
+                    <input type="text" name="folderName" id="folderName" value="" class="form-control" /><br />
+
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </form>
+            </div>
+            @if (Model.successResponse != null)
+            {
+                <div class="card-footer bg-success text-white">
+                    @Model.successResponse
+                    <a href="@Model.redirectFolder" class="btn btn-warning" target="_blank">Click</a>
+                </div>
+            }
+            @if (Model.errorResponse != null)
+            {
+        <div class="card-footer bg-danger text-white">
+            @Model.errorResponse
+            <a href="@Model.redirectFolder" class="btn btn-warning" target="_blank">Click</a>
+        </div>
+            }
+            @if (Model.successResponse != null && Model.errorResponse != null)
+            {
+                <div class="card-footer bg-white">
+                    
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

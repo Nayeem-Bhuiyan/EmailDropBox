@@ -14,6 +14,7 @@ using Dropbox.Api.Common;
 using Dropbox.Api.Files;
 using Dropbox.Api.Team;
 using System.IO;
+using Microsoft.Extensions.Options;
 
 namespace DropBoxTest.Controllers
 {
@@ -29,7 +30,7 @@ namespace DropBoxTest.Controllers
         public async Task<IActionResult> Index()
         {
 
-            string token = "sl.A_-b6-CkQgOwqnM71H5Ik79wl5XZ4JxW06VN8eL6Mm8bo6V3MLrm8CGgnLXf-DYi_I5WKtSM4JIK36y75wddpjWQcDufnOcc68p47F6N8GEh3tEgfMK9t-phhuEDZ-sQi6k_3Eo";
+            string token = "sl.BACeYZEpRDrUW9UhPqCyBmNVARDhnreNyrPLJT_ozc2QQR-oiEYLdk0hlunfEKhPmwjfxKq9RjOOcFq4Na1CCMl9m78PRcaHww_rPjNwM3dKU633pnZ6noxbCrnOhVpkW1f_JgI";
             UserDetails data = new UserDetails();
             using (var dbx = new DropboxClient(token))
             {
@@ -48,6 +49,8 @@ namespace DropBoxTest.Controllers
 
             return View(data);
         }
+
+
 
 
 
