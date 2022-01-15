@@ -20,7 +20,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
     [Area("DropboxInfo")]
     public class DropboxController : Controller
     {
-        string token = "sl.BAAgQXyjgasV1OS-GtnmsTwVo8HiArW2Mnp2uU_qXc7xPqoV3SQv0T5DB8w5d8BXCCh0kxdnk3EDh8karZPNiePO6zHAK5WV1iIsFoKCE1s_B_0w6LXurffviIX1JWDI54l2wgA";
+        string token = "sl.BALFmi6vEWlzknjBFsWDjgPpEUuitPqfryzhYy83akPZE6GBmHA6o1lREGOHwpbTqPb1E3gb1q45AhC61sUd1F9BnNtGsDlPQDOCWuomMwTUPoGaEnO4fVbEHeG8e3x3q6D0dfw";
         public async Task<IActionResult> FolderList()
         {
             List<FolderDetails> listFolder = new List<FolderDetails>();
@@ -110,60 +110,10 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         }
 
 
-
-        public async Task<IActionResult> UploadFiles(CreateFolderViewModel model)
-        {
-            var dropboxApiToken = token;
-            var bakupFolderPath = "D:/myDropbox";
-            try
-            {
-                var dateNowString = System.DateTime.Now.ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture);
-                var backupName = $"<YOUR_DB_NAME>_db_bak{dateNowString}.sql.gz";
-                var localFilePath = Path.Combine(bakupFolderPath, backupName);
-
-                if (string.IsNullOrEmpty(localFilePath))
-                {
-                    var dbs = new DropBoxService(dropboxApiToken);
-                   
-                    await dbs.Upload(backupName, localFilePath);
-                
-                    //File.Delete(localFilePath);
-                }
-                else
-                {
-                    // WARN
-                }
-
-
-            }
-            catch (System.Exception ex)
-            {
-                while (ex.InnerException != null)
-                    ex = ex.InnerException;
-
-                // WARN
-            }
-
-            return View();
-
-        }
-
-
-
-
-        }
-
-    public class DropBoxService
-    {
-        private string ApiToken { get; set; }
-        public DropBoxService(string token)
-        {
-            ApiToken = token;
-        }
-
         public async Task Upload(string remoteFileName, string localFilePath)
         {
-            using (var dbx = new DropboxClient(this.ApiToken))
+            
+            using (var dbx = new DropboxClient(token))
             {
                 using (var fs = new FileStream(localFilePath, FileMode.Open, FileAccess.Read))
                 {
@@ -171,11 +121,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
                 }
             }
         }
+
+
     }
-
-
-
-
-
-
 }

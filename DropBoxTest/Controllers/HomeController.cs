@@ -27,27 +27,9 @@ namespace DropBoxTest.Controllers
             _logger = logger;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-
-            string token = "sl.BAAgQXyjgasV1OS-GtnmsTwVo8HiArW2Mnp2uU_qXc7xPqoV3SQv0T5DB8w5d8BXCCh0kxdnk3EDh8karZPNiePO6zHAK5WV1iIsFoKCE1s_B_0w6LXurffviIX1JWDI54l2wgA";
-            UserDetails data = new UserDetails();
-            using (var dbx = new DropboxClient(token))
-            {
-                var id = await dbx.Users.GetCurrentAccountAsync();
-                 data = new UserDetails
-                {
-                    userName=id.Name.DisplayName,
-                    email=id.Email,
-                    country=id.Country,
-                    profileImageUrl=id.ProfilePhotoUrl
-
-                };
-
-
-            }
-
-            return View(data);
+            return View();
         }
 
 
