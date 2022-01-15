@@ -12,4 +12,5 @@ namespace DropBoxTest.Areas.DropboxInfo.Models
         public string successResponse { get; set; }
         public string redirectFolder { get; set; }
     }
+
 }
