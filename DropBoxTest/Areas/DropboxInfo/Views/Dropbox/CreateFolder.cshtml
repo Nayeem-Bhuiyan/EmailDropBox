@@ -3,18 +3,56 @@
     ViewData["Title"] = "CreateFolder";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@section Style{
+    <style>
+        #loadingImg {
+            display: none;
+        }
 
+        input[type="file"] {
+            display: block;
+        }
+
+        .imageThumb {
+            max-height: 75px;
+            border: 2px solid;
+            padding: 1px;
+            cursor: pointer;
+        }
+
+        .pip {
+            display: inline-block;
+            margin: 10px 10px 0 0;
+        }
+
+        .remove {
+            display: block;
+            background: #444;
+            border: 1px solid black;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+        }
+
+            .remove:hover {
+                background: red;
+                color: white;
+            }
+    </style>
+}
 <div class="row">
     <div class="col-md-6">
+        <img src="~/assets/images/avatars/loading.gif" id="loadingImg" class="img-responsive" />
         <div class="card">
             <div class="card-header bg-success text-white text-center">
                 <h5>Create Your Dropbox Folder</h5>
             </div>
             <div class="card-body">
-                <form asp-area="DropboxInfo" asp-controller="Dropbox" asp-action="CreateFolder" method="post">
+                <form asp-area="DropboxInfo" asp-controller="Dropbox" asp-action="CreateFolder" method="post" id="frmData" enctype="multipart/form-data">
                     <input type="text" name="folderName" id="folderName" value="" class="form-control" /><br />
+                    <input type="file" name="Attachments" class="form-control" id="Attachments" value="" placeholder="Select" multiple required />
 
-                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="submit" id="btnSave" class="btn btn-primary">Create</button>
                 </form>
             </div>
             @if (Model.successResponse != null)
@@ -26,23 +64,176 @@
             }
             @if (Model.errorResponse != null)
             {
-        <div class="card-footer bg-danger text-white">
-            @Model.errorResponse
-            <a href="@Model.redirectFolder" class="btn btn-warning" target="_blank">GO</a>
-        </div>
+                <div class="card-footer bg-danger text-white">
+                    @Model.errorResponse
+                    <a href="@Model.redirectFolder" class="btn btn-warning" target="_blank">GO</a>
+                </div>
             }
             @if (Model.successResponse != null && Model.errorResponse != null)
             {
                 <div class="card-footer bg-white">
-                    
+
                 </div>
             }
         </div>
- 
+
+    </div>
+    <div class="col-md-6">
+        <button id="btnRemoveAll" class="btn btn-danger">Remove All</button>
+        <div id="previewImageDisplayDIV">
+
+        </div>
     </div>
 </div>
-@section Scripts{ 
+@section Scripts{
     <script>
 
+
+
+        $(document).ready(function () {
+
+            UploadedImagePreview();
+
+
+            var filesInput = $("#Attachments");
+
+            filesInput.on("change", function (e) {
+                var files = e.target.files; //FileList object
+                $.each(files, function (i, file) {
+                    var pReader = new FileReader();
+                    pReader.addEventListener("load", function (e) {
+                        var pic = e.target;
+                        console.log(pic.result)
+                    });
+                    pReader.readAsDataURL(file);
+                });
+            });
+
+
+        });
+
+
+
+
+
+        $("#btnRemoveAll").click(function () {
+            $(".remove").each(function () {
+                $(this).parent(".pip").remove();
+            })
+
+        })
+        function UploadedImagePreview() {
+
+            var len = $("#Attachments").get(0).files.length;
+            if (len > 10) {
+                alert("Only 10 Images No More");
+                return false;
+            }
+
+            if (window.File && window.FileList && window.FileReader) {
+                $("#Attachments").on("change", function (e) {
+                    var files = e.target.files,
+                        filesLength = files.length;
+                    for (var i = 0; i < filesLength; i++) {
+                        var f = files[i]
+                        var fileReader = new FileReader();
+                        fileReader.onload = (function (e) {
+                            var file = e.target;
+                            $("#previewImageDisplayDIV").append($("<span class=\"pip\">" +
+                                "<img class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/>" +
+                                "<br/><span class=\"remove\">Remove</span>" +
+                                "</span>"));
+                            $(".remove").click(function () {
+                                $(this).parent(".pip").remove();
+                            });
+                        });
+                        fileReader.readAsDataURL(f);
+                    }
+
+                });
+            } else {
+                alert("Your browser doesn't support to File API")
+            }
+
+        }
+
+
+
+        //$('#btnSave').click(function () {
+
+        //    $('#frmData').on('submit', function (event) {
+        //        event.preventDefault();
+        //        var form = $("#frmData")[0];
+        //        var frmdata = new FormData(form);
+
+        //        var filesInput = $("#Attachments");
+
+        //        filesInput.on("change", function (e) {
+        //            var files = e.target.files; //FileList object
+        //            $.each(files, function (i, file) {
+        //                var pReader = new FileReader();
+        //                pReader.addEventListener("load", function (e) {
+        //                    var pic = e.target;
+        //                    console.log(pic.result)
+        //                    frmdata.append("Attachments", pic.result);
+        //                });
+        //                pReader.readAsDataURL(file);
+        //            });
+        //        });
+
+
+                
+
+
+
+
+        //        frmdata.append("folderName", $('#folderName').val());
+        //        console.log(frmdata);
+        //        Swal.fire({
+        //            title: 'Are you sure?',
+        //            text: "You want to save this!",
+        //            icon: 'warning',
+        //            showCancelButton: true,
+        //            confirmButtonColor: '#3085d6',
+        //            cancelButtonColor: '#d33',
+        //            confirmButtonText: 'Yes, save it!'
+        //        }).then((result) => {
+        //            if (result.isConfirmed) {
+        //                $.ajax({
+        //                    url: "/DropboxInfo/Dropbox/CreateFolder",
+        //                    type: "POST",
+        //                    data: frmdata,
+        //                    enctype: "multipart/form-data",
+        //                    dataType: "json",
+        //                    processData: false,
+        //                    contentType: false,
+        //                    cache: false,
+        //                    timeout: 600000,
+        //                    beforeSend: function () {
+        //                        $('#btnSave').attr('disabled', 'disabled');
+        //                        $('#btnSave').val('Submitting...');
+        //                        $('#loadingImg').show();
+
+        //                    }
+        //                }).done(function (data) {
+        //                    $('#loadingImg').hide();
+        //                    swal.fire('success', 'Saved Successfully!', 'success').then(function () {
+        //                        location.reload();
+        //                    });
+        //                }).fail(function () {
+        //                    $('#loadingImg').hide();
+
+        //                    swal.fire('warning', 'Failed!', 'warning');
+        //                })
+        //            }
+
+        //        });
+
+        //    })
+
+
+
+
+        //})
     </script>
 }
