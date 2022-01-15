@@ -22,6 +22,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
     public class DropboxController : Controller
     {
         string token = "sl.BAI7o5q8qOiSBq2t3Tx3Ioazx-_og11AsG7HSCJW1sF41Lo2G2QsUXhVOKLiqDfMF9XXWyX9Or_BgoiqYEMGZqM16WofDpgc7-aeUBO8TaqyvwGy-RSBF6GpAaNuHBrEnQ4IHKQ";
+     
         public async Task<IActionResult> FolderList()
         {
             List<FolderDetails> listFolder = new List<FolderDetails>();
@@ -113,10 +114,11 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
                    user.Name.DisplayName,
                    DateTime.Now);
             string targetFileName = user.Name.DisplayName + DateTime.Now.ToString("yymmssfff") + ".jpg";
-            string srcFile = @"D:\DownloadImage\download.jpg";
+            //string srcFile = @"D:\DownloadImage\download.jpg";
+            string srcFile = model.Attachments;
 
-
-                var targetFolder = "/" + model.folderName+"/";
+            string folder = Directory.GetCurrentDirectory();
+            var targetFolder = "/" + model.folderName+"/";
 
        
                 using (var fileToSave = new FileStream(srcFile, FileMode.Open))
@@ -140,8 +142,89 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
             //}
 
-            return View(model);
+            return Json(model);
         }
+
+
+
+
+
+
+
+
+        private async Task Upload(string localPath, string remotePath)
+        {
+            var dropBoxclient = new DropboxClient(token);
+            const int ChunkSize = 4096 * 1024;
+            using (var fileStream = new FileStream(localPath, FileMode.Open))
+            {
+                if (fileStream.Length <= ChunkSize)
+                {
+                    await dropBoxclient.Files.UploadAsync(remotePath, body: fileStream);
+                }
+                else
+                {
+                    await this.ChunkUpload(remotePath, fileStream, (int)ChunkSize);
+                }
+            }
+        }
+
+        private async Task ChunkUpload(String path, FileStream stream, int chunkSize)
+        {
+            var dropBoxclient = new DropboxClient(token);
+            ulong numChunks = (ulong)Math.Ceiling((double)stream.Length / chunkSize);
+            byte[] buffer = new byte[chunkSize];
+            string sessionId = null;
+            for (ulong idx = 0; idx < numChunks; idx++)
+            {
+                var byteRead = stream.Read(buffer, 0, chunkSize);
+
+                using (var memStream = new MemoryStream(buffer, 0, byteRead))
+                {
+                    if (idx == 0)
+                    {
+                        var result = await dropBoxclient.Files.UploadSessionStartAsync(false, memStream);
+                        sessionId = result.SessionId;
+                    }
+                    else
+                    {
+                        var cursor = new UploadSessionCursor(sessionId, (ulong)chunkSize * idx);
+
+                        if (idx == numChunks - 1)
+                        {
+                            FileMetadata fileMetadata = await dropBoxclient.Files.UploadSessionFinishAsync(cursor, new CommitInfo(path), memStream);
+                            Console.WriteLine(fileMetadata.PathDisplay);
+                        }
+                        else
+                        {
+                            await dropBoxclient.Files.UploadSessionAppendV2Async(cursor, false, memStream);
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         public IActionResult ListTeamMembers()
@@ -172,17 +255,17 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
 
 
-        public async Task Upload(string remoteFileName, string localFilePath)
-            {
+        //public async Task Upload(string remoteFileName, string localFilePath)
+        //    {
 
-                using (var dbx = new DropboxClient(token))
-                {
-                    using (var fs = new FileStream(localFilePath, FileMode.Open, FileAccess.Read))
-                    {
-                        await dbx.Files.UploadAsync($"/{remoteFileName}", WriteMode.Overwrite.Instance, body: fs);
-                    }
-                }
-            }
+        //        using (var dbx = new DropboxClient(token))
+        //        {
+        //            using (var fs = new FileStream(localFilePath, FileMode.Open, FileAccess.Read))
+        //            {
+        //                await dbx.Files.UploadAsync($"/{remoteFileName}", WriteMode.Overwrite.Instance, body: fs);
+        //            }
+        //        }
+        //    }
 
             //public IActionResult Upload()
             //{

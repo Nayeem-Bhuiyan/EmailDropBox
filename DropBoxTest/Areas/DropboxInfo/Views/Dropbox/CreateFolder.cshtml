@@ -49,7 +49,7 @@
             </div>
             <div class="card-body">
                 <form asp-area="DropboxInfo" asp-controller="Dropbox" asp-action="CreateFolder" method="post" id="frmData" enctype="multipart/form-data">
-                    <input type="text" name="folderName" id="folderName" value="" class="form-control" /><br />
+                    <input type="text" name="folderName" id="folderName" value="" class="form-control" placeholder="Order Name"/><br />
                     <input type="file" name="Attachments" class="form-control" id="Attachments" value="" placeholder="Select" multiple required />
 
                     <button type="submit" id="btnSave" class="btn btn-primary">Create</button>
@@ -93,23 +93,6 @@
         $(document).ready(function () {
 
             UploadedImagePreview();
-
-
-            var filesInput = $("#Attachments");
-
-            filesInput.on("change", function (e) {
-                var files = e.target.files; //FileList object
-                $.each(files, function (i, file) {
-                    var pReader = new FileReader();
-                    pReader.addEventListener("load", function (e) {
-                        var pic = e.target;
-                        console.log(pic.result)
-                    });
-                    pReader.readAsDataURL(file);
-                });
-            });
-
-
         });
 
 
@@ -159,81 +142,70 @@
 
 
 
-        //$('#btnSave').click(function () {
+        $('#btnSave').click(function () {
 
-        //    $('#frmData').on('submit', function (event) {
-        //        event.preventDefault();
-        //        var form = $("#frmData")[0];
-        //        var frmdata = new FormData(form);
+            $('#frmData').on('submit', function (event) {
+                event.preventDefault();
+                var form = $("#frmData")[0];
+                var frmdata = new FormData(form);
 
-        //        var filesInput = $("#Attachments");
-
-        //        filesInput.on("change", function (e) {
-        //            var files = e.target.files; //FileList object
-        //            $.each(files, function (i, file) {
-        //                var pReader = new FileReader();
-        //                pReader.addEventListener("load", function (e) {
-        //                    var pic = e.target;
-        //                    console.log(pic.result)
-        //                    frmdata.append("Attachments", pic.result);
-        //                });
-        //                pReader.readAsDataURL(file);
-        //            });
-        //        });
-
+            
 
                 
+                var files = $('input[type="file"').get(0).files;
+                    $.each(files, function (i, file) {
+                        var pReader = new FileReader();
+                        pReader.addEventListener("load", function (e) {
+                            
+                            frmdata.append("Attachments", "\"" + e.target.result + "\" title=\"" + file.name + "\"");
+                            console.log("\"" + e.target.result + "\" title=\"" + file.name + "\"")
+                        });
+                        pReader.readAsDataURL(file);
+                    });
+               
+                frmdata.append("folderName", $('#folderName').val());
+                console.log(frmdata);
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to save this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, save it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/DropboxInfo/Dropbox/CreateFolder",
+                            type: "POST",
+                            data: frmdata,
+                            enctype: "multipart/form-data",
+                            dataType: "json",
+                            processData: false,
+                            contentType: false,
+                            cache: false,
+                            timeout: 600000,
+                            beforeSend: function () {
+                                $('#btnSave').attr('disabled', 'disabled');
+                                $('#btnSave').val('Submitting...');
+                                $('#loadingImg').show();
 
+                            }
+                        }).done(function (data) {
+                            $('#loadingImg').hide();
+                            swal.fire('success', 'Saved Successfully!', 'success').then(function () {
+                                location.reload();
+                            });
+                        }).fail(function () {
+                            $('#loadingImg').hide();
 
+                            swal.fire('warning', 'Failed!', 'warning');
+                        })
+                    }
 
+                });
 
-        //        frmdata.append("folderName", $('#folderName').val());
-        //        console.log(frmdata);
-        //        Swal.fire({
-        //            title: 'Are you sure?',
-        //            text: "You want to save this!",
-        //            icon: 'warning',
-        //            showCancelButton: true,
-        //            confirmButtonColor: '#3085d6',
-        //            cancelButtonColor: '#d33',
-        //            confirmButtonText: 'Yes, save it!'
-        //        }).then((result) => {
-        //            if (result.isConfirmed) {
-        //                $.ajax({
-        //                    url: "/DropboxInfo/Dropbox/CreateFolder",
-        //                    type: "POST",
-        //                    data: frmdata,
-        //                    enctype: "multipart/form-data",
-        //                    dataType: "json",
-        //                    processData: false,
-        //                    contentType: false,
-        //                    cache: false,
-        //                    timeout: 600000,
-        //                    beforeSend: function () {
-        //                        $('#btnSave').attr('disabled', 'disabled');
-        //                        $('#btnSave').val('Submitting...');
-        //                        $('#loadingImg').show();
-
-        //                    }
-        //                }).done(function (data) {
-        //                    $('#loadingImg').hide();
-        //                    swal.fire('success', 'Saved Successfully!', 'success').then(function () {
-        //                        location.reload();
-        //                    });
-        //                }).fail(function () {
-        //                    $('#loadingImg').hide();
-
-        //                    swal.fire('warning', 'Failed!', 'warning');
-        //                })
-        //            }
-
-        //        });
-
-        //    })
-
-
-
-
-        //})
+            })
+        })
     </script>
 }
