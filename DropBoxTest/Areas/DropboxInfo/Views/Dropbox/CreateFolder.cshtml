@@ -50,7 +50,7 @@
             <div class="card-body">
                 <form asp-area="DropboxInfo" asp-controller="Dropbox" asp-action="CreateFolder" method="post" id="frmData" enctype="multipart/form-data">
                     <input type="text" name="folderName" id="folderName" value="" class="form-control" placeholder="Order Name"/><br />
-                    <input type="file" name="Attachments" class="form-control" id="Attachments" value="" placeholder="Select" multiple required />
+                    <input type="file" name="Image" class="form-control" id="Image" value="" placeholder="Select" multiple required />
 
                     <button type="submit" id="btnSave" class="btn btn-primary">Create</button>
                 </form>
@@ -107,14 +107,14 @@
         })
         function UploadedImagePreview() {
 
-            var len = $("#Attachments").get(0).files.length;
+            var len = $("#imageList").get(0).files.length;
             if (len > 10) {
-                alert("Only 10 Images No More");
+                alert("Only 10 imageList No More");
                 return false;
             }
 
             if (window.File && window.FileList && window.FileReader) {
-                $("#Attachments").on("change", function (e) {
+                $("#imageList").on("change", function (e) {
                     var files = e.target.files,
                         filesLength = files.length;
                     for (var i = 0; i < filesLength; i++) {
@@ -157,8 +157,8 @@
                         var pReader = new FileReader();
                         pReader.addEventListener("load", function (e) {
                             
-                            frmdata.append("Attachments", "\"" + e.target.result + "\" title=\"" + file.name + "\"");
-                            console.log("\"" + e.target.result + "\" title=\"" + file.name + "\"")
+                            frmdata.append("imageList", file.name);
+                            console.log(file.name)
                         });
                         pReader.readAsDataURL(file);
                     });
@@ -193,12 +193,13 @@
                             }
                         }).done(function (data) {
                             $('#loadingImg').hide();
+                            $('#btnSave').attr('disabled', false);
                             swal.fire('success', 'Saved Successfully!', 'success').then(function () {
                                 location.reload();
                             });
                         }).fail(function () {
                             $('#loadingImg').hide();
-
+                            $('#btnSave').attr('disabled', false);
                             swal.fire('warning', 'Failed!', 'warning');
                         })
                     }
