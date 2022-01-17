@@ -194,7 +194,7 @@
                         }).done(function (data) {
                             $('#loadingImg').hide();
                             $('#btnSave').attr('disabled', false);
-                            swal.fire('success', 'Saved Successfully!', 'success');
+                            swal.fire('success', 'Saved ' + data.countFile+' file Successfully!', 'success');
 
                             if (data.successResponse != null) {
                                 $('#frmcard').append(`<div class="card-footer bg-success text-white">

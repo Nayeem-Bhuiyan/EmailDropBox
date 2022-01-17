@@ -12,7 +12,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Models
         public string errorResponse { get; set; }
         public string successResponse { get; set; }
         public string redirectFolder { get; set; }
-        public string Attachments { get; set; }
+        public int? countFile { get; set; }
         public List<IFormFile> imageList { get; set; }
         public List<string> imageUrlList { get; set; }
     }
