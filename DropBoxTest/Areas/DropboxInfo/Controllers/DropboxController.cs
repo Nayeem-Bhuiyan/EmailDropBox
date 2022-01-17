@@ -176,109 +176,111 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
 
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateFolder(CreateFolderViewModel model)
-        //{
-
-        //    var dropBoxclient = new DropboxClient(token);
-        //    var list = await dropBoxclient.Files.ListFolderAsync(string.Empty);
-
-        //    foreach (var item in list.Entries.Where(i => i.IsFolder))
-        //    {
-        //        if (item.Name.Equals(model.folderName))
-        //        {
-
-        //            model.errorResponse = "Sorry: folder with name " + model.folderName + " already exists!";
-
-        //        }
-
-        //    }
-        //    if (model.errorResponse != "Sorry: folder with name " + model.folderName + " already exists!")
-        //    {
-        //        Dropbox.Api.Files.CreateFolderArg folderArg = new CreateFolderArg("/" + model.folderName);
-        //        await dropBoxclient.Files.CreateFolderV2Async(folderArg);
-        //        model.successResponse = "Successfully Created folder named  " + model.folderName;
-        //        model.redirectFolder = "https://www.dropbox.com/home/" + model.folderName;
-        //    }
-        //    else
-        //    {
-        //        model.redirectFolder = "https://www.dropbox.com/home/" + model.folderName;
-        //    }
-
-        //    var user = await dropBoxclient.Users.GetCurrentAccountAsync();
-
-        //    var filename = string.Format(
-        //           CultureInfo.InvariantCulture,
-        //           user.Name.DisplayName,
-        //           DateTime.Now);
-        //    string targetFileName = user.Name.DisplayName + DateTime.Now.ToString("yymmssfff") + ".jpg";
-        //    string srcFile = @"D:\DownloadImage\download.jpg";
-        //    var targetFolder = "/" + model.folderName + "/";
-        //    using (var fileToSave = new FileStream(srcFile, FileMode.Open))
-        //    {
-
-        //        await dropBoxclient.Files.UploadAsync(targetFolder + targetFileName, WriteMode.Overwrite.Instance, body: fileToSave);
-
-        //    }
 
 
-        //    return View(model);
-        //}
+    //[HttpPost]
+    //public async Task<IActionResult> CreateFolder(CreateFolderViewModel model)
+    //{
 
-        //private async Task Upload(string localPath, string remotePath)
-        //{
-        //    var dropBoxclient = new DropboxClient(token);
-        //    const int ChunkSize = 4096 * 1024;
-        //    using (var fileStream = new FileStream(localPath, FileMode.Open))
-        //    {
-        //        if (fileStream.Length <= ChunkSize)
-        //        {
-        //            await dropBoxclient.Files.UploadAsync(remotePath, body: fileStream);
-        //        }
-        //        else
-        //        {
-        //            await this.ChunkUpload(remotePath, fileStream, (int)ChunkSize);
-        //        }
-        //    }
-        //}
+    //    var dropBoxclient = new DropboxClient(token);
+    //    var list = await dropBoxclient.Files.ListFolderAsync(string.Empty);
 
-        //private async Task ChunkUpload(String path, FileStream stream, int chunkSize)
-        //{
-        //    var dropBoxclient = new DropboxClient(token);
-        //    ulong numChunks = (ulong)Math.Ceiling((double)stream.Length / chunkSize);
-        //    byte[] buffer = new byte[chunkSize];
-        //    string sessionId = null;
-        //    for (ulong idx = 0; idx < numChunks; idx++)
-        //    {
-        //        var byteRead = stream.Read(buffer, 0, chunkSize);
+    //    foreach (var item in list.Entries.Where(i => i.IsFolder))
+    //    {
+    //        if (item.Name.Equals(model.folderName))
+    //        {
 
-        //        using (var memStream = new MemoryStream(buffer, 0, byteRead))
-        //        {
-        //            if (idx == 0)
-        //            {
-        //                var result = await dropBoxclient.Files.UploadSessionStartAsync(false, memStream);
-        //                sessionId = result.SessionId;
-        //            }
-        //            else
-        //            {
-        //                var cursor = new UploadSessionCursor(sessionId, (ulong)chunkSize * idx);
+    //            model.errorResponse = "Sorry: folder with name " + model.folderName + " already exists!";
 
-        //                if (idx == numChunks - 1)
-        //                {
-        //                    FileMetadata fileMetadata = await dropBoxclient.Files.UploadSessionFinishAsync(cursor, new CommitInfo(path), memStream);
-        //                    Console.WriteLine(fileMetadata.PathDisplay);
-        //                }
-        //                else
-        //                {
-        //                    await dropBoxclient.Files.UploadSessionAppendV2Async(cursor, false, memStream);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+    //        }
+
+    //    }
+    //    if (model.errorResponse != "Sorry: folder with name " + model.folderName + " already exists!")
+    //    {
+    //        Dropbox.Api.Files.CreateFolderArg folderArg = new CreateFolderArg("/" + model.folderName);
+    //        await dropBoxclient.Files.CreateFolderV2Async(folderArg);
+    //        model.successResponse = "Successfully Created folder named  " + model.folderName;
+    //        model.redirectFolder = "https://www.dropbox.com/home/" + model.folderName;
+    //    }
+    //    else
+    //    {
+    //        model.redirectFolder = "https://www.dropbox.com/home/" + model.folderName;
+    //    }
+
+    //    var user = await dropBoxclient.Users.GetCurrentAccountAsync();
+
+    //    var filename = string.Format(
+    //           CultureInfo.InvariantCulture,
+    //           user.Name.DisplayName,
+    //           DateTime.Now);
+    //    string targetFileName = user.Name.DisplayName + DateTime.Now.ToString("yymmssfff") + ".jpg";
+    //    string srcFile = @"D:\DownloadImage\download.jpg";
+    //    var targetFolder = "/" + model.folderName + "/";
+    //    using (var fileToSave = new FileStream(srcFile, FileMode.Open))
+    //    {
+
+    //        await dropBoxclient.Files.UploadAsync(targetFolder + targetFileName, WriteMode.Overwrite.Instance, body: fileToSave);
+
+    //    }
 
 
-        public IActionResult ListTeamMembers()
+    //    return View(model);
+    //}
+
+    //private async Task Upload(string localPath, string remotePath)
+    //{
+    //    var dropBoxclient = new DropboxClient(token);
+    //    const int ChunkSize = 4096 * 1024;
+    //    using (var fileStream = new FileStream(localPath, FileMode.Open))
+    //    {
+    //        if (fileStream.Length <= ChunkSize)
+    //        {
+    //            await dropBoxclient.Files.UploadAsync(remotePath, body: fileStream);
+    //        }
+    //        else
+    //        {
+    //            await this.ChunkUpload(remotePath, fileStream, (int)ChunkSize);
+    //        }
+    //    }
+    //}
+
+    //private async Task ChunkUpload(String path, FileStream stream, int chunkSize)
+    //{
+    //    var dropBoxclient = new DropboxClient(token);
+    //    ulong numChunks = (ulong)Math.Ceiling((double)stream.Length / chunkSize);
+    //    byte[] buffer = new byte[chunkSize];
+    //    string sessionId = null;
+    //    for (ulong idx = 0; idx < numChunks; idx++)
+    //    {
+    //        var byteRead = stream.Read(buffer, 0, chunkSize);
+
+    //        using (var memStream = new MemoryStream(buffer, 0, byteRead))
+    //        {
+    //            if (idx == 0)
+    //            {
+    //                var result = await dropBoxclient.Files.UploadSessionStartAsync(false, memStream);
+    //                sessionId = result.SessionId;
+    //            }
+    //            else
+    //            {
+    //                var cursor = new UploadSessionCursor(sessionId, (ulong)chunkSize * idx);
+
+    //                if (idx == numChunks - 1)
+    //                {
+    //                    FileMetadata fileMetadata = await dropBoxclient.Files.UploadSessionFinishAsync(cursor, new CommitInfo(path), memStream);
+    //                    Console.WriteLine(fileMetadata.PathDisplay);
+    //                }
+    //                else
+    //                {
+    //                    await dropBoxclient.Files.UploadSessionAppendV2Async(cursor, false, memStream);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
+
+
+    public IActionResult ListTeamMembers()
         {
 
             return View();
