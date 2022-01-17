@@ -42,15 +42,15 @@
 }
 <div class="row">
     <div class="col-md-6">
-        <img src="~/assets/images/avatars/loading.gif" id="loadingImg" class="img-responsive" />
+        @*<img src="~/assets/images/avatars/loading.gif" id="loadingImg" class="img-responsive" />*@
         <div class="card">
             <div class="card-header bg-success text-white text-center">
                 <h5>Create Your Dropbox Folder</h5>
             </div>
             <div class="card-body">
                 <form asp-area="DropboxInfo" asp-controller="Dropbox" asp-action="CreateFolder" method="post" id="frmData" enctype="multipart/form-data">
-                    <input type="text" name="folderName" id="folderName" value="" class="form-control" placeholder="Order Name"/><br />
-                    <input type="file" name="Image" class="form-control" id="Image" value="" placeholder="Select" multiple required />
+                    <input type="text" name="folderName" id="folderName" value="" class="form-control" placeholder="Order Name" /><br />
+                    <input type="file" name="imageList" class="form-control" id="imageList" value="" placeholder="Select" multiple required />
 
                     <button type="submit" id="btnSave" class="btn btn-primary">Create</button>
                 </form>
@@ -83,6 +83,18 @@
         <div id="previewImageDisplayDIV">
 
         </div>
+        <br />
+        <br />
+        <br />
+        @if (ViewBag.ImageList!= null)
+        {
+        @foreach (var item in ViewBag.ImageList)
+                    {
+                        <img src="/@item" alt="Alternate Text" />
+                    }
+        }
+
+
     </div>
 </div>
 @section Scripts{
@@ -149,20 +161,20 @@
                 var form = $("#frmData")[0];
                 var frmdata = new FormData(form);
 
-            
 
-                
+
+
                 var files = $('input[type="file"').get(0).files;
-                    $.each(files, function (i, file) {
-                        var pReader = new FileReader();
-                        pReader.addEventListener("load", function (e) {
-                            
-                            frmdata.append("imageList", file.name);
-                            console.log(file.name)
-                        });
-                        pReader.readAsDataURL(file);
+                $.each(files, function (i, file) {
+                    var pReader = new FileReader();
+                    pReader.addEventListener("load", function (e) {
+
+                        frmdata.append("imageList", file.name);
+                        console.log(file.name)
                     });
-               
+                    pReader.readAsDataURL(file);
+                });
+
                 frmdata.append("folderName", $('#folderName').val());
                 console.log(frmdata);
                 Swal.fire({

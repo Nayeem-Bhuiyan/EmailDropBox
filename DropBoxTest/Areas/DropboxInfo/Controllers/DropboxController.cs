@@ -31,7 +31,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         }
 
 
-        string token = "sl.BAI7o5q8qOiSBq2t3Tx3Ioazx-_og11AsG7HSCJW1sF41Lo2G2QsUXhVOKLiqDfMF9XXWyX9Or_BgoiqYEMGZqM16WofDpgc7-aeUBO8TaqyvwGy-RSBF6GpAaNuHBrEnQ4IHKQ";
+        string token = "sl.BAT1y2gDYLdnzLfLTABlYw5LpUIhn7Rz-rNdqI70wvjEt2KD9dY6aK8N9k7uttrsYNboUbBDOdKuT7KjYjDIdJAaK6nr-VjMpLG9PVMhzIRRdrTyYmfswrJEWBaSHaHc8bYwqoMsl.BAI7o5q8qOiSBq2t3Tx3Ioazx-_og11AsG7HSCJW1sF41Lo2G2QsUXhVOKLiqDfMF9XXWyX9Or_BgoiqYEMGZqM16WofDpgc7-aeUBO8TaqyvwGy-RSBF6GpAaNuHBrEnQ4IHKQ";
      
         public async Task<IActionResult> FolderList()
         {
@@ -93,55 +93,52 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         {
 
             var dropBoxclient = new DropboxClient(token);
-            var list = await dropBoxclient.Files.ListFolderAsync(string.Empty);
+            //var list = await dropBoxclient.Files.ListFolderAsync(string.Empty);
 
-            foreach (var item in list.Entries.Where(i => i.IsFolder))
-            {
-                if (item.Name.Equals(model.folderName))
-                {
+            //foreach (var item in list.Entries.Where(i => i.IsFolder))
+            //{
+            //    if (item.Name.Equals(model.folderName))
+            //    {
 
-                    model.errorResponse = "Sorry: folder with name " + model.folderName + " already exists!";
+            //        model.errorResponse = "Sorry: folder with name " + model.folderName + " already exists!";
 
-                }
+            //    }
 
-            }
-            if (model.errorResponse != "Sorry: folder with name " + model.folderName + " already exists!")
-            {
-                Dropbox.Api.Files.CreateFolderArg folderArg = new CreateFolderArg("/" + model.folderName);
-                await dropBoxclient.Files.CreateFolderV2Async(folderArg);
-                model.successResponse = "Successfully Created folder named  " + model.folderName;
-                model.redirectFolder = "https://www.dropbox.com/home/" + model.folderName;
-            }
-            else
-            {
-                model.redirectFolder = "https://www.dropbox.com/home/" + model.folderName;
-            }
+            //}
+            //if (model.errorResponse != "Sorry: folder with name " + model.folderName + " already exists!")
+            //{
+            //    Dropbox.Api.Files.CreateFolderArg folderArg = new CreateFolderArg("/" + model.folderName);
+            //    await dropBoxclient.Files.CreateFolderV2Async(folderArg);
+            //    model.successResponse = "Successfully Created folder named  " + model.folderName;
+            //    model.redirectFolder = "https://www.dropbox.com/home/" + model.folderName;
+            //}
+            //else
+            //{
+            //    model.redirectFolder = "https://www.dropbox.com/home/" + model.folderName;
+            //}
 
-            var user = await dropBoxclient.Users.GetCurrentAccountAsync();
+            //var user = await dropBoxclient.Users.GetCurrentAccountAsync();
 
-            var filename = string.Format(
-                   CultureInfo.InvariantCulture,
-                   user.Name.DisplayName,
-                   DateTime.Now);
-            string targetFileName = user.Name.DisplayName + DateTime.Now.ToString("yymmssfff") + ".jpg";
+            //var filename = string.Format(
+            //       CultureInfo.InvariantCulture,
+            //       user.Name.DisplayName,
+            //       DateTime.Now);
+            //string targetFileName = user.Name.DisplayName + DateTime.Now.ToString("yymmssfff") + ".jpg";
             //string srcFile = @"D:\DownloadImage\download.jpg";
             //string srcFile = model.Attachments;
 
             string folder = Directory.GetCurrentDirectory();
             var targetFolder = "/" + model.folderName+"/";
-            model.imageUrlList = SaveUpload(model);
+         model.imageUrlList = SaveUpload(model);
+            ViewBag.ImageList = model.imageUrlList;
+            //foreach (var srcFile in model.imageUrlList)
+            //{
+            //    using (var fileToSave = new FileStream(srcFile, FileMode.Open))
+            //    {
 
-            foreach (var srcFile in model.imageUrlList)
-            {
-                using (var fileToSave = new FileStream(srcFile, FileMode.Open))
-                {
-
-                    var updated = await dropBoxclient.Files.UploadAsync(
-                        targetFolder + targetFileName,
-                        WriteMode.Overwrite.Instance,
-                        body: fileToSave);
-                }
-            }
+            //        await dropBoxclient.Files.UploadAsync(targetFolder + targetFileName,WriteMode.Overwrite.Instance,body: fileToSave);
+            //    }
+            //}
 
 
                 
@@ -181,20 +178,20 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
                 Directory.CreateDirectory(path);
             }
 
-            
+            List<string> dataList = new List<string>();
             foreach (IFormFile image in model.imageList)
             {
                 string fileName = Path.GetFileName(image.FileName);
                 using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
                 {
                     image.CopyTo(stream);
-                    model.imageUrlList.Add(fileName);
+                    dataList.Add("/UploadedImageFolder/"+ fileName);
                 }
             }
-
+            model.imageUrlList = dataList;
             return model.imageUrlList;
         }
-    }
+    
 
 
     //private async Task Upload(string localPath, string remotePath)
@@ -248,28 +245,6 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
     //        }
     //    }
     //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     public IActionResult ListTeamMembers()
