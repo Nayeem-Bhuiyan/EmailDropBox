@@ -47,7 +47,7 @@
             <div class="card-header bg-success text-white text-center">
                 <h5>Create Your Dropbox Folder</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body" id="frmcard">
                 <form asp-area="DropboxInfo" asp-controller="Dropbox" asp-action="CreateFolder" method="post" id="frmData" enctype="multipart/form-data">
                     <input type="text" name="folderName" id="folderName" value="" class="form-control" placeholder="Order Name" /><br />
                     <input type="file" name="imageList" class="form-control" id="imageList" value="" placeholder="Select" multiple required />
@@ -55,7 +55,7 @@
                     <button type="submit" id="btnSave" class="btn btn-primary">Create</button>
                 </form>
             </div>
-            @if (Model.successResponse != null)
+            @*@if (Model.successResponse != null)
             {
                 <div class="card-footer bg-success text-white">
                     @Model.successResponse
@@ -74,7 +74,7 @@
                 <div class="card-footer bg-white">
 
                 </div>
-            }
+            }*@
         </div>
 
     </div>
@@ -97,13 +97,14 @@
 
 
 
-
-
-        $("#btnRemoveAll").click(function () {
+        function removeAll() {
             $(".remove").each(function () {
                 $(this).parent(".pip").remove();
             })
+        }
 
+        $("#btnRemoveAll").click(function () {
+            removeAll();
         })
         function UploadedImagePreview() {
 
@@ -140,7 +141,10 @@
 
         }
 
-
+        function clear() {
+            $("#folderName").val("");
+            $("#imageList").val("");
+        }
 
         $('#btnSave').click(function () {
 
@@ -191,6 +195,27 @@
                             $('#loadingImg').hide();
                             $('#btnSave').attr('disabled', false);
                             swal.fire('success', 'Saved Successfully!', 'success');
+
+                            if (data.successResponse != null) {
+                                $('#frmcard').append(`<div class="card-footer bg-success text-white">
+                                 ${data.successResponse}
+                                <a href="${data.redirectFolder}" class="btn btn-warning" target="_blank">GO</a>
+                                </div>`)
+                            }
+                            if (data.errorResponse != null) {
+                                $('#frmcard').append(`<div class="card-footer bg-danger text-white">
+                                 ${data.errorResponse}
+                                <a href="${data.redirectFolder}" class="btn btn-warning" target="_blank">GO</a>
+                                </div>`)
+                            } 
+                            if (data.successResponse != null && data.errorResponse != null) {
+                                $('#frmcard').append(`<div class="card-footer bg-white">
+
+                                </div>`)
+                            }
+
+                            removeAll();
+                            clear();
                         }).fail(function () {
                             $('#loadingImg').hide();
                             $('#btnSave').attr('disabled', false);

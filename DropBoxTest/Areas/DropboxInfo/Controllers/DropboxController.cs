@@ -125,13 +125,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
                    DateTime.Now);
             string targetFileName = user.Name.DisplayName + DateTime.Now.ToString("yymmssfff") + ".jpg";
             var targetFolder = "/" + model.folderName + "/";
-
-            string folder = Directory.GetCurrentDirectory();
-            string wwwPath = this._environment.WebRootPath;
-            string contentPath = this._environment.ContentRootPath;
-
             string path = Path.Combine(this._environment.WebRootPath, "UploadedImageFolder");
-
             model.imageUrlList = SaveUpload(model);
             foreach (string imageUrl in model.imageUrlList)
             {
