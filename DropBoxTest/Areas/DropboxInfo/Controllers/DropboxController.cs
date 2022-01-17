@@ -35,12 +35,32 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
         public async Task<IActionResult> FolderList()
         {
+
+
             List<FolderDetails> listFolder = new List<FolderDetails>();
             using (var client = new DropboxClient(token))
             {
                 var list = await client.Files.ListFolderAsync(string.Empty, true);
                 var folders = list.Entries.Where(x => x.IsFolder);
                 var files = list.Entries.Where(x => x.IsFile);
+    
+                var dataList = await client.Files.ListFolderAsync(string.Empty, recursive: true);
+
+                foreach (var item in dataList.Entries.Where(i => i.IsFile))
+                {
+                    string urlFile = item.AsFile.PathLower;
+                    string downloadPath = Path.Combine(this._environment.WebRootPath, "DownLoad");
+                    using (var response = await client.Files.DownloadAsync(urlFile))
+                    {
+                        using (var fileTodownload = new FileStream(downloadPath, FileMode.Open))
+                        {
+                            (await response.GetContentAsStreamAsync()).CopyTo(fileTodownload);
+                        }
+                        
+                    }
+                }
+
+
 
                 foreach (var folder in folders)
                 {
@@ -53,10 +73,15 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
                         count = files.Count()
 
                     };
+
                     listFolder.Add(data);
 
                 }
             }
+
+
+
+
             return View(listFolder);
 
         }
@@ -89,7 +114,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> saveToFolder([FromForm]CreateFolderViewModel model)
+        public async Task<IActionResult> saveToFolder([FromForm] CreateFolderViewModel model)
         {
 
             var dropBoxclient = new DropboxClient(token);
@@ -118,7 +143,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
             }
 
             var user = await dropBoxclient.Users.GetCurrentAccountAsync();
-           
+
             var targetFolder = "/" + model.folderName + "/";
             string path = Path.Combine(this._environment.WebRootPath, "UploadedImageFolder");
             model.imageUrlList = SaveUpload(model);
@@ -126,12 +151,17 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
             foreach (string imageUrl in model.imageUrlList)
             {
                 string targetFileName = user.Name.DisplayName + count + DateTime.Now.ToString("yymmssfff") + ".jpg";
+
                 using (var fileToSave = new FileStream(imageUrl, FileMode.Open))
                 {
                     await dropBoxclient.Files.UploadAsync(targetFolder + targetFileName, WriteMode.Overwrite.Instance, body: fileToSave);
+
                 }
                 count = count + 1;
             }
+
+
+
             model.countFile = count;
             return Json(model);
         }
@@ -163,60 +193,77 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         }
 
 
-    //private async Task Upload(string localPath, string remotePath)
-    //{
-    //    var dropBoxclient = new DropboxClient(token);
-    //    const int ChunkSize = 4096 * 1024;
-    //    using (var fileStream = new FileStream(localPath, FileMode.Open))
-    //    {
-    //        if (fileStream.Length <= ChunkSize)
-    //        {
-    //            await dropBoxclient.Files.UploadAsync(remotePath, body: fileStream);
-    //        }
-    //        else
-    //        {
-    //            await this.ChunkUpload(remotePath, fileStream, (int)ChunkSize);
-    //        }
-    //    }
-    //}
-
-    //private async Task ChunkUpload(String path, FileStream stream, int chunkSize)
-    //{
-    //    var dropBoxclient = new DropboxClient(token);
-    //    ulong numChunks = (ulong)Math.Ceiling((double)stream.Length / chunkSize);
-    //    byte[] buffer = new byte[chunkSize];
-    //    string sessionId = null;
-    //    for (ulong idx = 0; idx < numChunks; idx++)
-    //    {
-    //        var byteRead = stream.Read(buffer, 0, chunkSize);
-
-    //        using (var memStream = new MemoryStream(buffer, 0, byteRead))
-    //        {
-    //            if (idx == 0)
-    //            {
-    //                var result = await dropBoxclient.Files.UploadSessionStartAsync(false, memStream);
-    //                sessionId = result.SessionId;
-    //            }
-    //            else
-    //            {
-    //                var cursor = new UploadSessionCursor(sessionId, (ulong)chunkSize * idx);
-
-    //                if (idx == numChunks - 1)
-    //                {
-    //                    FileMetadata fileMetadata = await dropBoxclient.Files.UploadSessionFinishAsync(cursor, new CommitInfo(path), memStream);
-    //                    Console.WriteLine(fileMetadata.PathDisplay);
-    //                }
-    //                else
-    //                {
-    //                    await dropBoxclient.Files.UploadSessionAppendV2Async(cursor, false, memStream);
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
+        //private async Task Upload(string localPath, string remotePath)
+        //{
+        //    var dropBoxclient = new DropboxClient(token);
+        //    const int ChunkSize = 40096 * 1024;
+        //    using (var fileStream = new FileStream(localPath, FileMode.Open))
+        //    {
+        //        if (fileStream.Length <= ChunkSize)
+        //        {
+        //            await dropBoxclient.Files.UploadAsync(remotePath, body: fileStream);
+        //        }
+        //        else
+        //        {
+        //            await this.ChunkUpload(remotePath, fileStream, (int)ChunkSize);
+        //        }
+        //    }
+        //}
 
 
-    public IActionResult ListTeamMembers()
+        //private async Task ChunkUpload(String path, FileStream stream, int chunkSize)
+        //{
+        //    var dropBoxclient = new DropboxClient(token);
+        //    ulong numChunks = (ulong)Math.Ceiling((double)stream.Length / chunkSize);
+        //    byte[] buffer = new byte[chunkSize];
+        //    string sessionId = null;
+        //    for (ulong idx = 0; idx < numChunks; idx++)
+        //    {
+        //        var byteRead = stream.Read(buffer, 0, chunkSize);
+
+        //        using (var memStream = new MemoryStream(buffer, 0, byteRead))
+        //        {
+        //            if (idx == 0)
+        //            {
+        //                var result = await dropBoxclient.Files.UploadSessionStartAsync(false, memStream);
+        //                sessionId = result.SessionId;
+        //            }
+        //            else
+        //            {
+        //                var cursor = new UploadSessionCursor(sessionId, (ulong)chunkSize * idx);
+
+        //                if (idx == numChunks - 1)
+        //                {
+        //                    FileMetadata fileMetadata = await dropBoxclient.Files.UploadSessionFinishAsync(cursor, new CommitInfo(path), memStream);
+        //                    Console.WriteLine(fileMetadata.PathDisplay);
+        //                }
+        //                else
+        //                {
+        //                    await dropBoxclient.Files.UploadSessionAppendV2Async(cursor, false, memStream);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+
+
+        private async Task Download(string filePathFromDropbox)
+        {
+            var dropBoxclient = new DropboxClient(token);
+            var response = await dropBoxclient.Files.DownloadAsync(filePathFromDropbox);
+            var expirationTimeTask = Task.Delay(TimeSpan.FromSeconds(30));
+            var strm = response.GetContentAsStreamAsync();
+            var finishedTask = await Task.WhenAny(expirationTimeTask, strm);
+            if (finishedTask == expirationTimeTask)
+            {
+                //timeout error processing (does not get here)
+            }
+        }
+
+
+
+        public IActionResult ListTeamMembers()
         {
 
             return View();
