@@ -118,7 +118,6 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
             }
 
             var user = await dropBoxclient.Users.GetCurrentAccountAsync();
-
             var filename = string.Format(
                    CultureInfo.InvariantCulture,
                    user.Name.DisplayName,
@@ -129,13 +128,9 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
             model.imageUrlList = SaveUpload(model);
             foreach (string imageUrl in model.imageUrlList)
             {
-
                 using (var fileToSave = new FileStream(imageUrl, FileMode.Open))
                 {
-
                     await dropBoxclient.Files.UploadAsync(targetFolder + targetFileName, WriteMode.Overwrite.Instance, body: fileToSave);
-                    
-
                 }
             }
 
