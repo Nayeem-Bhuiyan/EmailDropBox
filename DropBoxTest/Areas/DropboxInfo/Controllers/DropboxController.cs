@@ -93,69 +93,53 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         {
 
             var dropBoxclient = new DropboxClient(token);
-            //var list = await dropBoxclient.Files.ListFolderAsync(string.Empty);
+            var list = await dropBoxclient.Files.ListFolderAsync(string.Empty);
 
-            //foreach (var item in list.Entries.Where(i => i.IsFolder))
-            //{
-            //    if (item.Name.Equals(model.folderName))
-            //    {
+            foreach (var item in list.Entries.Where(i => i.IsFolder))
+            {
+                if (item.Name.Equals(model.folderName))
+                {
 
-            //        model.errorResponse = "Sorry: folder with name " + model.folderName + " already exists!";
+                    model.errorResponse = "Sorry: folder with name " + model.folderName + " already exists!";
 
-            //    }
+                }
 
-            //}
-            //if (model.errorResponse != "Sorry: folder with name " + model.folderName + " already exists!")
-            //{
-            //    Dropbox.Api.Files.CreateFolderArg folderArg = new CreateFolderArg("/" + model.folderName);
-            //    await dropBoxclient.Files.CreateFolderV2Async(folderArg);
-            //    model.successResponse = "Successfully Created folder named  " + model.folderName;
-            //    model.redirectFolder = "https://www.dropbox.com/home/" + model.folderName;
-            //}
-            //else
-            //{
-            //    model.redirectFolder = "https://www.dropbox.com/home/" + model.folderName;
-            //}
+            }
+            if (model.errorResponse != "Sorry: folder with name " + model.folderName + " already exists!")
+            {
+                Dropbox.Api.Files.CreateFolderArg folderArg = new CreateFolderArg("/" + model.folderName);
+                await dropBoxclient.Files.CreateFolderV2Async(folderArg);
+                model.successResponse = "Successfully Created folder named  " + model.folderName;
+                model.redirectFolder = "https://www.dropbox.com/home/" + model.folderName;
+            }
+            else
+            {
+                model.redirectFolder = "https://www.dropbox.com/home/" + model.folderName;
+            }
 
-            //var user = await dropBoxclient.Users.GetCurrentAccountAsync();
+            var user = await dropBoxclient.Users.GetCurrentAccountAsync();
 
-            //var filename = string.Format(
-            //       CultureInfo.InvariantCulture,
-            //       user.Name.DisplayName,
-            //       DateTime.Now);
-            //string targetFileName = user.Name.DisplayName + DateTime.Now.ToString("yymmssfff") + ".jpg";
+            var filename = string.Format(
+                   CultureInfo.InvariantCulture,
+                   user.Name.DisplayName,
+                   DateTime.Now);
+            string targetFileName = user.Name.DisplayName + DateTime.Now.ToString("yymmssfff") + ".jpg";
             //string srcFile = @"D:\DownloadImage\download.jpg";
             //string srcFile = model.Attachments;
 
             string folder = Directory.GetCurrentDirectory();
             var targetFolder = "/" + model.folderName+"/";
          model.imageUrlList = SaveUpload(model);
-            ViewBag.ImageList = model.imageUrlList;
-            //foreach (var srcFile in model.imageUrlList)
-            //{
-            //    using (var fileToSave = new FileStream(srcFile, FileMode.Open))
-            //    {
+            foreach (var srcFile in model.imageUrlList)
+            {
+                using (var fileToSave = new FileStream(srcFile, FileMode.Open))
+                {
 
-            //        await dropBoxclient.Files.UploadAsync(targetFolder + targetFileName,WriteMode.Overwrite.Instance,body: fileToSave);
-            //    }
-            //}
+                    await dropBoxclient.Files.UploadAsync(targetFolder + targetFileName, WriteMode.Overwrite.Instance, body: fileToSave);
+                }
+            }
 
-
-                
-            
-
-         
-
-            //using (var mem = new MemoryStream(System.Text.UTF8Encoding.UTF8.GetBytes(file)))
-            //{
-            //    await dropBoxclient.Files.UploadAsync(folder + fName, WriteMode.Overwrite.Instance, body: mem);
-            //}
-            //foreach (var item in System.IO.File.ReadAllText(file))
-            //{
-
-            //}
-
-            return Json(model);
+            return View(model);
         }
 
 
