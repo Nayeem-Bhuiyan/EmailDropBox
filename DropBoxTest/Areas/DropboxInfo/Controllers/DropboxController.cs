@@ -21,7 +21,6 @@ using DropBoxTest.Helper;
 using System.IO.Compression;
 using System.Threading;
 
-
 namespace DropBoxTest.Areas.DropboxInfo.Controllers
 {
     [Area("DropboxInfo")]
@@ -39,96 +38,39 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
         public async Task<IActionResult> FolderList()
         {
-            
-
+           
             List<FolderDetails> listFolder = new List<FolderDetails>();
             using (var client = new DropboxClient(token))
             {
                 var list = await client.Files.ListFolderAsync(string.Empty, true);
                 var folders = list.Entries.Where(x => x.IsFolder);
                 var files = list.Entries.Where(x => x.IsFile);
-
-                var dataList = await client.Files.ListFolderAsync(string.Empty, recursive: true);
-
-
-                foreach (var item in dataList.Entries.Where(i => i.IsFile))
-                {
-                    string srcFile = @"https://www.dropbox.com/home" + item.AsFile.PathLower;
-
-
-
-                    //await FileDownload(urlFile);
-
-                    //string downloadPath = Path.Combine(this._environment.WebRootPath, "DownLoad");
-                    //using (var response = await client.Files.DownloadAsync(srcFile))
-                    //{
-                    //    using (var fileTodownload = new FileStream(downloadPath, FileMode.Open))
-                    //    {
-                    //        (await response.GetContentAsStreamAsync()).CopyTo(fileTodownload);
-                    //    }
-                    //}
-
-                }
-
-
-
                 foreach (var folder in folders)
                 {
-
                     FolderDetails data = new FolderDetails
                     {
                         folderName = folder.Name,
                         folderPath = folder.PathDisplay,
                         downloadLink = "https://www.dropbox.com/home" + folder.PathDisplay,
                         count = files.Count()
-
                     };
 
                     listFolder.Add(data);
 
                 }
             }
-
-
-
-
             return View(listFolder);
 
         }
 
 
 
-        //public async Task<IActionResult> HttpDownloadFile()
-        //{
 
-        //    string ToDownloadPath = @"D:\Nayeem\Project_Dropbox\DropBoxTest\DropBoxTest\wwwroot\DownLoad\";
-        //    var client = new DropboxClient(token);
-        //    var dataList = await client.Files.ListFolderAsync(string.Empty, recursive: true);
-
-        //    List<string> SourceUrlList = new List<string>();
-        //    foreach (var item in dataList.Entries.Where(i => i.IsFile))
-        //    {
-        //        string srcFile = @"https://www.dropbox.com/home" + item.AsFile.PathLower;
-
-        //        SourceUrlList.Add(srcFile);
-        //    }
-
-        //    foreach (var FromDownloadPath in SourceUrlList)
-        //    {
-        //        HttpClient httpClient = new HttpClient();
-        //        using HttpResponseMessage response = await httpClient.GetAsync(FromDownloadPath, HttpCompletionOption.ResponseHeadersRead);
-        //        using Stream streamToReadFrom = await response.Content.ReadAsStreamAsync();
-        //        //using Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create);
-        //        var streamToWriteTo = new FileStream(ToDownloadPath, FileMode.Create);
-        //       await streamToReadFrom.CopyToAsync(streamToWriteTo);
-        //    }
-
-        //}
         public async Task<IActionResult> DownloadZip()
         {
             var client = new DropboxClient(token);
             var dataList = await client.Files.ListFolderAsync(string.Empty, recursive: true);
-
+            CreateFolderViewModel model = new CreateFolderViewModel();
             List<string> SourceUrlList = new List<string>();
             foreach (var item in dataList.Entries.Where(i => i.IsFile))
             {
@@ -139,50 +81,86 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
 
             }
-            string ToDownloadUrl = @"D:\Nayeem\Project_Dropbox\DropBoxTest\DropBoxTest\wwwroot\DownLoad";
-            string FromDownloadUrl = @"D:\DownloadProject.zip";
+            model.imageUrlList = SourceUrlList;
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var ziparchive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                {
 
-           Downloader.Download(FromDownloadUrl, ToDownloadUrl,20);
-            
+                    for (int i = 0; i < model.imageUrlList.Count; i++)
+                    {
+                        byte[] myByte = System.Text.ASCIIEncoding.Default.GetBytes(SourceUrlList[i]);
+                        var fileentry = ziparchive.CreateEntry(SourceUrlList[i], CompressionLevel.Fastest);
+                        using (var zipStream = fileentry.Open()) zipStream.Write(myByte, 0, myByte.Length);
+                    }
+                }
+                var data = File(memoryStream.ToArray(), "application/zip", "Archeive" + Guid.NewGuid() + ".zip");
+                return data;
+            }
 
-            //using (var memoryStream = new MemoryStream())
-            //{
-            //    using (var ziparchive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
-            //    {
-
-            //        for (int i = 0; i < SourceUrlList.Count; i++)
-            //        {
-            //            byte[] myByte = System.Text.ASCIIEncoding.Default.GetBytes(SourceUrlList[i]);
-            //            var fileentry = ziparchive.CreateEntry(SourceUrlList[i], CompressionLevel.Fastest);
-            //            using (var zipStream = fileentry.Open()) zipStream.Write(myByte, 0, myByte.Length);
-            //        }
-            //    }
-            //    var data = File(memoryStream.ToArray(), "application/zip", "Archeive" + Guid.NewGuid() + ".zip");
-            //    return data;
-            //}
-            return View();
 
         }
 
 
-
+        [HttpGet]
         public async Task<IActionResult> FileDownload()
         {
-            
-
             var client = new DropboxClient(token);
             var dataList = await client.Files.ListFolderAsync(string.Empty, recursive: true);
+            CreateFolderViewModel model = new CreateFolderViewModel();
+            foreach (var item in dataList.Entries.Where(i => i.IsFile))
+            {
+                model.imageUrlList.Add(@"https://www.dropbox.com/home" + item.AsFile.PathLower);
+            }
+             await ZipDownloadHelper.GetZip(model.imageUrlList);
+            return Json(true);
+        }
 
-            //foreach (var item in dataList.Entries.Where(i => i.IsFile))
-            //{
-            //    string srcFile = @"https://www.dropbox.com/home" + item.AsFile.PathLower;
-
-            //    await MakeDownload(srcFile);
-            //}
-            string FromDownloadUrl = @"D:\DownloadProject.zip";
 
 
-            return await MakeDownload(FromDownloadUrl);
+        private async Task DownloadDropboxFile(string downloadDropboxFileUrl)
+        {
+            var client = new DropboxClient(token);
+            var response = await client.Files.DownloadAsync(downloadDropboxFileUrl);
+            ulong fileSize = response.Response.Size;
+            const int bufferSize = 1024 * 1024;
+
+            var buffer = new byte[bufferSize];
+
+            using (var stream = await response.GetContentAsStreamAsync())
+            {
+                using (var file = new FileStream(@"D:\Nayeem\Project_Dropbox\DropBoxTest\DropBoxTest\wwwroot\DownLoad\", FileMode.OpenOrCreate))
+                {
+                    var length = stream.Read(buffer, 0, bufferSize);
+
+                    while (length > 0)
+                    {
+                        file.Write(buffer, 0, length);
+                        var percentage = 100 * (ulong)file.Length / fileSize;
+                        // Update progress bar with the percentage.
+                        // progressBar.Value = (int)percentage
+                        Console.WriteLine(percentage);
+
+                        length = stream.Read(buffer, 0, bufferSize);
+                    }
+                }
+            }
+        }
+
+
+
+
+
+        private async Task DownloadData(DropboxClient dbx,string fromDownloadUrl, string localFilePath)
+        {
+            using (var response = await dbx.Files.DownloadAsync(fromDownloadUrl))
+            {
+                using (var fileStream =new FileStream(localFilePath,FileMode.OpenOrCreate))
+                {
+                    (await response.GetContentAsStreamAsync()).CopyTo(fileStream);
+                }
+            }
+
         }
 
 
@@ -203,19 +181,19 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
 
 
-        private Dictionary<string, string> GetMimeTypes()
-        {
-            return new Dictionary<string, string>{
-                {".txt", "text/plain"},
-                {".pdf", "application/pdf"},
-                {".doc", "application/vnd.ms-word"},
-                {".docx", "application/vnd.ms-word"},
-                {".png", "image/png"},
-                {".jpg", "image/jpeg"},
-                {".zip", "application/zip"},
-                {".rar", "application/x-rar-compressed, application/octet-stream"},
-            };
-        }
+        //private Dictionary<string, string> GetMimeTypes()
+        //{
+        //    return new Dictionary<string, string>{
+        //        {".txt", "text/plain"},
+        //        {".pdf", "application/pdf"},
+        //        {".doc", "application/vnd.ms-word"},
+        //        {".docx", "application/vnd.ms-word"},
+        //        {".png", "image/png"},
+        //        {".jpg", "image/jpeg"},
+        //        {".zip", "application/zip"},
+        //        {".rar", "application/x-rar-compressed, application/octet-stream"},
+        //    };
+        //}
 
    private static readonly Dictionary<string, string> MIMETypesDictionary = new Dictionary<string, string>
   {
