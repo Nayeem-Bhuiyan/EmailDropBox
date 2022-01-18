@@ -127,7 +127,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
                         using (var zipStream = fileentry.Open()) zipStream.Write(myByte, 0, myByte.Length);
                     }
                 }
-                var data = File(memoryStream.ToArray(), "application/zip", "Archeive.zip");
+                var data = File(memoryStream.ToArray(), "application/zip", "Archeive"+Guid.NewGuid()+".zip");
                 return data;
             }
 
