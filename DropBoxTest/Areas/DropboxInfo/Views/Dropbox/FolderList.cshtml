@@ -12,6 +12,7 @@
                     <th>Folder Path</th>
                     <th>File Count</th>
                     <th>Download Link</th>
+                    <th>Download Zip</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,6 +32,7 @@
                         @item.count
                     </td>
                     <td><a href="@item.downloadLink" class="btn btn-primary" download>Download</a></td>
+                    <td><a asp-area="DropboxInfo" asp-controller="Dropbox" asp-action="DownloadLargeFile" class="btn btn-primary" download>DownloadZip</a></td>
                 </tr>
                     }
                 
