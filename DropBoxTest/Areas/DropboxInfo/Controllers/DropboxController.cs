@@ -451,38 +451,26 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
 
 
-        [HttpGet]
-        public async Task<IActionResult> GetBlobDownload()
-        {
+        //[HttpGet]
+        //public async Task<IActionResult> GetBlobDownload()
+        //{
 
-            var client = new DropboxClient(token);
-            var dataList = await client.Files.ListFolderAsync(string.Empty,recursive:true);
-            CreateFolderViewModel model = new CreateFolderViewModel();
-            List<string> listUrl = new List<string>();
-            foreach (var item in dataList.Entries.Where(i => i.IsFile))
-            {
+        //    var client = new DropboxClient(token);
+        //    var dataList = await client.Files.ListFolderAsync(string.Empty,recursive:true);
+        //    CreateFolderViewModel model = new CreateFolderViewModel();
+        //    List<string> listUrl = new List<string>();
+        //    foreach (var item in dataList.Entries.Where(i => i.IsFile))
+        //    {
                 
-                listUrl.Add((item.AsFile.PathLower).ToString());
-            }
-            model.imageUrlList=listUrl;
-            var filePathTemp= Path.Combine(_environment.WebRootPath, @"DownLoad");
-  
-
-            if (model.imageUrlList!=null)
-            {
-
-                    foreach (var fromUrl in model.imageUrlList)
-                    {
-                        await DownloadData(client, fromUrl, filePathTemp);
-                    }
-            }
-
-                
-
-            return Json(true);
-
-
-        }
+        //        listUrl.Add((item.AsFile.PathLower).ToString());
+        //    }
+        //    model.imageUrlList=listUrl;
+        //    var filePathTemp= Path.Combine(_environment.WebRootPath, @"DownLoad");
+        //            foreach (var fromUrl in model.imageUrlList)
+        //            {
+        //                await DownloadData(client, fromUrl, filePathTemp);
+        //            }
+        //}
 
 
 
@@ -565,10 +553,12 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
             var targetFolder = "/" + model.folderName + "/";
             string path = Path.Combine(this._environment.WebRootPath, "UploadedImageFolder");
-            model.imageUrlList = SaveUpload(model);
+            model.imageUrlList = GetImageUrlList(model);
             int? count = 1;
             foreach (string imageUrl in model.imageUrlList)
             {
+
+
                 string targetFileName = user.Name.DisplayName + count + DateTime.Now.ToString("yymmssfff") + ".jpg";
 
                 using (var fileToSave = new FileStream(imageUrl, FileMode.Open))
@@ -589,7 +579,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
 
 
-        public List<string> SaveUpload(CreateFolderViewModel model)
+        public List<string> GetImageUrlList(CreateFolderViewModel model)
         {
             string wwwPath = this._environment.WebRootPath;
             string contentPath = this._environment.ContentRootPath;
@@ -634,55 +624,43 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         //}
 
 
-        //private async Task ChunkUpload(String path, FileStream stream, int chunkSize)
+        //private async Task Download(string foldername)
         //{
-        //    var dropBoxclient = new DropboxClient(token);
-        //    ulong numChunks = (ulong)Math.Ceiling((double)stream.Length / chunkSize);
-        //    byte[] buffer = new byte[chunkSize];
-        //    string sessionId = null;
-        //    for (ulong idx = 0; idx < numChunks; idx++)
+           
+        //    var dbx = new DropboxClient(token);
+        //    using (var response = await dbx.Files.DownloadZipAsync("/" + foldername))
         //    {
-        //        var byteRead = stream.Read(buffer, 0, chunkSize);
-
-        //        using (var memStream = new MemoryStream(buffer, 0, byteRead))
+        //        Stream ms = await response.GetContentAsStreamAsync();
+        //        Int16 bufferSize = 1024;
+        //        byte[] buffer = new byte[bufferSize + 1];
+        //        Response.Clear();
+        //        Response.ContentType = "application/x-zip-compressed";
+        //        Response.AddHeader("content-disposition", "attachment; filename=myfolder.zip");
+        //        Response.BufferOutput = false;
+        //        int count = ms.Read(buffer, 0, bufferSize);
+        //        while (count > 0)
         //        {
-        //            if (idx == 0)
-        //            {
-        //                var result = await dropBoxclient.Files.UploadSessionStartAsync(false, memStream);
-        //                sessionId = result.SessionId;
-        //            }
-        //            else
-        //            {
-        //                var cursor = new UploadSessionCursor(sessionId, (ulong)chunkSize * idx);
-
-        //                if (idx == numChunks - 1)
-        //                {
-        //                    FileMetadata fileMetadata = await dropBoxclient.Files.UploadSessionFinishAsync(cursor, new CommitInfo(path), memStream);
-        //                    Console.WriteLine(fileMetadata.PathDisplay);
-        //                }
-        //                else
-        //                {
-        //                    await dropBoxclient.Files.UploadSessionAppendV2Async(cursor, false, memStream);
-        //                }
-        //            }
+        //            Response.OutputStream.Write(buffer, 0, count);
+        //            count = ms.Read(buffer, 0, bufferSize);
         //        }
         //    }
         //}
 
 
 
-        private async Task Download(string filePathFromDropbox)
-        {
-            var dropBoxclient = new DropboxClient(token);
-            var response = await dropBoxclient.Files.DownloadAsync(filePathFromDropbox);
-            var expirationTimeTask = Task.Delay(TimeSpan.FromSeconds(30));
-            var strm = response.GetContentAsStreamAsync();
-            var finishedTask = await Task.WhenAny(expirationTimeTask, strm);
-            if (finishedTask == expirationTimeTask)
-            {
-                //timeout error processing (does not get here)
-            }
-        }
+
+        //private async Task Download(string filePathFromDropbox)
+        //{
+        //    var dropBoxclient = new DropboxClient(token);
+        //    var response = await dropBoxclient.Files.DownloadAsync(filePathFromDropbox);
+        //    var expirationTimeTask = Task.Delay(TimeSpan.FromSeconds(30));
+        //    var strm = response.GetContentAsStreamAsync();
+        //    var finishedTask = await Task.WhenAny(expirationTimeTask, strm);
+        //    if (finishedTask == expirationTimeTask)
+        //    {
+        //        //timeout error processing (does not get here)
+        //    }
+        //}
 
 
 
@@ -710,55 +688,5 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
             return View(dataList);
         }
 
-
-
-
-
-        //public async Task Upload(string remoteFileName, string localFilePath)
-        //    {
-
-        //        using (var dbx = new DropboxClient(token))
-        //        {
-        //            using (var fs = new FileStream(localFilePath, FileMode.Open, FileAccess.Read))
-        //            {
-        //                await dbx.Files.UploadAsync($"/{remoteFileName}", WriteMode.Overwrite.Instance, body: fs);
-        //            }
-        //        }
-        //    }
-
-        //public IActionResult Upload()
-        //{
-
-        //    return View();
-        //}
-        //[HttpPost]
-        //public async Task<ActionResult> Upload(string name, DateTime date, string content)
-        //{
-        //    var filename = string.Format(
-        //        CultureInfo.InvariantCulture,
-        //        "{0}.{1:yyyyMMdd}.md",
-        //        name,
-        //        date);
-
-        //    var client = new DropboxClient(token);
-        //    if (client == null)
-        //    {
-        //        return RedirectToAction("Index", "Home");
-        //    }
-
-        //    using (var mem = new MemoryStream(Encoding.UTF8.GetBytes(content)))
-        //    {
-        //        var upload = await client.Files.UploadAsync("/" + filename, body: mem);
-        //    }
-
-        //}
-
-
-
-
-
     }
-
-
-
 }
