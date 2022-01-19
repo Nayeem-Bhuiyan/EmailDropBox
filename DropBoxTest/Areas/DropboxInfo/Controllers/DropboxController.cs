@@ -34,7 +34,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         }
 
 
-        string token = "sl.BAUmNo_NZAkfgDdmkLMUAaNKzQS4oaAbnZuO2OaEKe8rsCiXDWHVcNhDtvF8RsdB0TC6XHmTlwqJ2SKDpCsLJLJkpHgPYrq56WUAHr8qi4u47zGwiNxEt5zpaGLEhm6tVo3fI-Q";
+        string token = "sl.BAZHMe7tvwk1BsmHDBbCD7TQRoj9PFj0Izj7z6KsHLqg5s9Q6JRPzoTBVmtS_kslcA-HEf1RBhkrdwvbQP9W7ORn9Ythtdl9xYgOn1j3cmzdI6LMhFdlB72O22_BTbDDcXibVtU";
 
         public async Task<IActionResult> FolderList()
         {
@@ -64,10 +64,12 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         }
 
 
-
+       
 
         public async Task<IActionResult> DownloadZip()
         {
+            
+
             var client = new DropboxClient(token);
             var dataList = await client.Files.ListFolderAsync(string.Empty, recursive: true);
             CreateFolderViewModel model = new CreateFolderViewModel();
@@ -82,6 +84,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
             }
             model.imageUrlList = SourceUrlList;
+
             using (var memoryStream = new MemoryStream())
             {
                 using (var ziparchive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
@@ -448,7 +451,38 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
 
 
+        [HttpGet]
+        public async Task<IActionResult> GetBlobDownload()
+        {
 
+            var client = new DropboxClient(token);
+            var dataList = await client.Files.ListFolderAsync(string.Empty,recursive:true);
+            CreateFolderViewModel model = new CreateFolderViewModel();
+            List<string> listUrl = new List<string>();
+            foreach (var item in dataList.Entries.Where(i => i.IsFile))
+            {
+                
+                listUrl.Add((item.AsFile.PathLower).ToString());
+            }
+            model.imageUrlList=listUrl;
+            var filePathTemp= Path.Combine(_environment.WebRootPath, @"DownLoad");
+  
+
+            if (model.imageUrlList!=null)
+            {
+
+                    foreach (var fromUrl in model.imageUrlList)
+                    {
+                        await DownloadData(client, fromUrl, filePathTemp);
+                    }
+            }
+
+                
+
+            return Json(true);
+
+
+        }
 
 
 
@@ -550,6 +584,10 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
             model.countFile = count;
             return Json(model);
         }
+
+
+
+
 
         public List<string> SaveUpload(CreateFolderViewModel model)
         {

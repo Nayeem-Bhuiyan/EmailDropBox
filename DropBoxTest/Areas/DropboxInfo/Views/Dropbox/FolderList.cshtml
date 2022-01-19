@@ -34,6 +34,7 @@
                     </td>
                     <td><a href="@item.downloadLink" class="btn btn-primary">Go To Folder</a></td>
                     <td><a asp-area="DropboxInfo" asp-controller="Dropbox" asp-action="DownloadZip" class="btn btn-primary">DownloadZip2</a></td>
+                    <td><a asp-area="DropboxInfo" asp-controller="Dropbox" asp-action="GetBlobDownload" class="btn btn-primary">DownloadZip3</a></td>
                     @*<td><a asp-area="DropboxInfo" asp-controller="Dropbox" asp-action="FileDownload" class="btn btn-primary" onclick="DownloadZipFile()">DownloadZip3</a></td>*@
                     <td><a class="btn btn-primary" onclick="DownloadZipFile()">DownloadZip3</a></td>
 
@@ -53,7 +54,8 @@
 
         function DownloadZipFile() {
             $.ajax({
-                url:"/DropboxInfo/Dropbox/FileDownload",
+                /*url:"/DropboxInfo/Dropbox/FileDownload",*/
+                url:"/DropboxInfo/Dropbox/GetBlobDownload",
                 type:"GET"
             }).done(function(data) {
                 alert(data);
