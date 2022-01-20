@@ -14,7 +14,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
     [Area("DropboxInfo")]
     public class DownloadController : Controller
     {
-
+        
         private IWebHostEnvironment _environment;
         public DownloadController(IWebHostEnvironment environment)
         {
@@ -22,25 +22,49 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
             _environment = environment;
         }
 
-        string token = "sl.BAeM9Acr4tzv5k-t4VUiRHeXKXwV2ADT6gzx2dI0gltMcJRyVHU4seLoxvwiFX0Az4YD7DpKM-iSUyeOgKEHBQ1r5A-Ul0odGzuAU0eXQ1bioLBKL04IjgzT6_aRVwH2yr6QevA";
+        private const string ACCESS_TOKEN = "sl.BAd1K5QvO5HZe1MPXqw76INFqzhaN0JkS7Gtk_OoxnSgQtDO9pM9jwBlkuv1cdWN39T4pjbYVtpUJTYy-iosjbOnCh6quBJOOzbABcDs9gqSy8iM4FbntRlngJZVIRznXzeVOrE"; // Set your access token here (it is quite long string)
+        private const string APP_ROOT_URI = "/Documents"; // Set your application root folder name
+        public static string AccessToken
+        {
+            get
+            {
+                return ACCESS_TOKEN;
+            }
+        }
 
+        /// <summary>
+        /// The root path where DwgOperations app files are stored.
+        /// </summary>
+        public static string AppRootUri
+        {
+            get
+            {
+                return APP_ROOT_URI;
+            }
+        }
+
+        string token = "sl.BAd1K5QvO5HZe1MPXqw76INFqzhaN0JkS7Gtk_OoxnSgQtDO9pM9jwBlkuv1cdWN39T4pjbYVtpUJTYy-iosjbOnCh6quBJOOzbABcDs9gqSy8iM4FbntRlngJZVIRznXzeVOrE";
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            string localDownloadPath = @"D:\Nayeem\Project_Dropbox\DropBoxTest\DropBoxTest\wwwroot\DownLoad";
+            
+           
+            string localDownloadPath = @"D:\Download";
 
             string response = "";
-            var list = await new dropboxApi.DropboxClient(token).Files.ListFolderAsync(string.Empty, true);
+            var list = await new dropboxApi.DropboxClient(AccessToken).Files.ListFolderAsync(string.Empty, true);
             var folders = list.Entries.Where(x => x.IsFolder);
-            var files = list.Entries.Where(x => x.IsFile);
-            //foreach (var folder in folders)
-            //{
-            //    await DownloadFolder(folder.PathLower, localDownloadPath);
-            //}
 
-            foreach (var file in files)
+            foreach (var folder in folders)
             {
-                response= await DownloadFile(file.AsFile.PathLower, localDownloadPath);
+                response = await DownloadFolder(folder.PathLower, localDownloadPath);
+
             }
+            //var files = list.Entries.Where(x => x.IsFile);
+            //foreach (var file in files)
+            //{
+            //    response = await DownloadFile(file.AsFile.PathLower, localDownloadPath);
+            //}
 
 
             return Ok(response);
@@ -48,9 +72,14 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
 
 
+
+
+
+
+
         //svcUri=dropbox folder url
 
-        public async Task<bool> DownloadFolder(string svcUri, string localFilePath)
+        public async Task<string> DownloadFolder(string svcUri, string localFilePath)
         {
             try
             {
@@ -66,11 +95,11 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
                     });
                 }
 
-                return true;
+                return "Success fully Download";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return ex.Message+ " ResponseFrom : DownloadFolder";
             }
         }
 
@@ -78,22 +107,26 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         {
             try
             {
-                using (var client = new dropboxApi.DropboxClient(token))
+                using (var client = new dropboxApi.DropboxClient(AccessToken))
                 {
                     var result = await client.Files.DownloadAsync(svcFileUri);
                     using (Stream sourceStream = await result.GetContentAsStreamAsync())
-                    using (FileStream source =System.IO.File.Open(localFilePath, FileMode.Create))
+                    //using (FileStream source =System.IO.File.Open(localFilePath, FileMode.Create))
+                    //{
+                    //    await sourceStream.CopyToAsync(source);
+                    //}
+                    using (var source =new FileStream(localFilePath, FileMode.Create))
                     {
                         await sourceStream.CopyToAsync(source);
                     }
                 }
 
-                return "Success";
+                return "Success!!DownloadFile";
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                return ex.Message;
+              
+                return ex.Message+ " ResponseFrom : DownloadFile";
             }
         }
 
@@ -102,12 +135,9 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         {
             try
             {
-
-         
-
                 dropboxApi.Sharing.ListSharedLinksResult result = null;
 
-                using (var client = new dropboxApi.DropboxClient(token))
+                using (var client = new dropboxApi.DropboxClient(AccessToken))
                 {
                     result = await client.Sharing.ListSharedLinksAsync(svcUri, directOnly: true);
                     if (result.Links.Count == 0)
@@ -121,11 +151,11 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
             }
             catch (Exception ex)
             {
-
-                Console.WriteLine(ex);
-                return null;
+                return ex.Message+"  ResponseFrom : GetFolderSharedLink";
             }
         }
+
+
 
     }
 }

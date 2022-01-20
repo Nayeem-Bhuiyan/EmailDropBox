@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Http;
 using DropBoxTest.Helper;
 using System.IO.Compression;
 using System.Threading;
-
+using dropboxApi = global::Dropbox.Api;
 namespace DropBoxTest.Areas.DropboxInfo.Controllers
 {
     [Area("DropboxInfo")]
@@ -32,9 +32,28 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
             _environment = environment;
         }
+        private const string ACCESS_TOKEN = "sl.BAd1K5QvO5HZe1MPXqw76INFqzhaN0JkS7Gtk_OoxnSgQtDO9pM9jwBlkuv1cdWN39T4pjbYVtpUJTYy-iosjbOnCh6quBJOOzbABcDs9gqSy8iM4FbntRlngJZVIRznXzeVOrE"; // Set your access token here (it is quite long string)
+        private const string APP_ROOT_URI = "/Documents";
+        public static string AccessToken
+        {
+            get
+            {
+                return ACCESS_TOKEN;
+            }
+        }
 
+        /// <summary>
+        /// The root path where DwgOperations app files are stored.
+        /// </summary>
+        public static string AppRootUri
+        {
+            get
+            {
+                return APP_ROOT_URI;
+            }
+        }
 
-        string token = "sl.BAeM9Acr4tzv5k-t4VUiRHeXKXwV2ADT6gzx2dI0gltMcJRyVHU4seLoxvwiFX0Az4YD7DpKM-iSUyeOgKEHBQ1r5A-Ul0odGzuAU0eXQ1bioLBKL04IjgzT6_aRVwH2yr6QevA";
+        string token = "sl.BAd1K5QvO5HZe1MPXqw76INFqzhaN0JkS7Gtk_OoxnSgQtDO9pM9jwBlkuv1cdWN39T4pjbYVtpUJTYy-iosjbOnCh6quBJOOzbABcDs9gqSy8iM4FbntRlngJZVIRznXzeVOrE";
 
         public async Task<IActionResult> FolderList()
         {
@@ -579,7 +598,44 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
 
 
+        //public async Task<List<dropboxApi.Files.FileMetadata>> UploadFiles(string svcPath, string localDirPath, List<string> filePaths)
+        //{
+        //    var uploadResults = new List<dropboxApi.Files.FileMetadata>();
 
+        //    try
+        //    {
+        //        if (filePaths == null || filePaths.Count() == 0)
+        //        {
+        //            throw new ArgumentNullException("UploadFiles: files list was empty");
+        //        }
+
+        //        foreach (var relativePath in filePaths)
+        //        {
+        //            string fullLocalDir = Path.Combine(localDirPath, relativePath);
+        //            string fullSvcUri = svcPath.ToUri() + relativePath.ToUri();
+
+        //            if (System.IO.File.Exists(fullLocalDir))
+        //            {
+        //                using (var client = new dropboxApi.DropboxClient(AccessToken))
+        //                using (Stream fileStream = System.IO.File.OpenRead(fullLocalDir))
+        //                {
+        //                    var result = await client.Files.UploadAsync(fullSvcUri, body: fileStream);
+        //                    uploadResults.Add(result);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                throw new FileNotFoundException($"DropboxManager: File with name: {relativePath} does not exists!");
+        //            }
+        //        }
+
+        //        return uploadResults;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return null;
+        //    }
+        //}
 
         public List<string> GetImageUrlList(CreateFolderViewModel model)
         {

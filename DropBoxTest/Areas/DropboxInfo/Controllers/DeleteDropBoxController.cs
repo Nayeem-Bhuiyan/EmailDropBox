@@ -10,7 +10,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
     [Area("DropboxInfo")]
     public class DeleteDropBoxController : Controller
     {
-        string token = "sl.BAeM9Acr4tzv5k-t4VUiRHeXKXwV2ADT6gzx2dI0gltMcJRyVHU4seLoxvwiFX0Az4YD7DpKM-iSUyeOgKEHBQ1r5A-Ul0odGzuAU0eXQ1bioLBKL04IjgzT6_aRVwH2yr6QevA";
+        string token = "sl.BAd1K5QvO5HZe1MPXqw76INFqzhaN0JkS7Gtk_OoxnSgQtDO9pM9jwBlkuv1cdWN39T4pjbYVtpUJTYy-iosjbOnCh6quBJOOzbABcDs9gqSy8iM4FbntRlngJZVIRznXzeVOrE";
         public async Task<IActionResult> Delete()
         {
             await DeleteFileOrFolder();
