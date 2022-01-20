@@ -28,7 +28,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         {
             string localDownloadPath = @"D:\Nayeem\Project_Dropbox\DropBoxTest\DropBoxTest\wwwroot\DownLoad";
 
-
+            string response = "";
             var list = await new dropboxApi.DropboxClient(token).Files.ListFolderAsync(string.Empty, true);
             var folders = list.Entries.Where(x => x.IsFolder);
             var files = list.Entries.Where(x => x.IsFile);
@@ -39,11 +39,11 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
             foreach (var file in files)
             {
-                await DownloadFile(file.AsFile.PathLower, localDownloadPath);
+                response= await DownloadFile(file.AsFile.PathLower, localDownloadPath);
             }
 
 
-            return View();
+            return Ok(response);
         }
 
 
@@ -74,7 +74,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
             }
         }
 
-        public async Task<bool> DownloadFile(string svcFileUri, string localFilePath)
+        public async Task<string> DownloadFile(string svcFileUri, string localFilePath)
         {
             try
             {
@@ -88,12 +88,12 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
                     }
                 }
 
-                return true;
+                return "Success";
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return false;
+                return ex.Message;
             }
         }
 
