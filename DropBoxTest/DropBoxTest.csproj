@@ -35,7 +35,6 @@
     <Folder Include="Areas\Auth\Views\" />
     <Folder Include="Areas\DropboxInfo\Data\" />
     <Folder Include="Areas\EmailInfo\Data\" />
-    <Folder Include="wwwroot\DownLoad\" />
     <Folder Include="wwwroot\UploadedImageFolder\" />
   </ItemGroup>
 

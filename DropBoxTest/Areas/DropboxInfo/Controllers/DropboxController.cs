@@ -34,7 +34,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         }
 
 
-        string token = "sl.BAY-HlNdir1odmAN2aQPjVsYs_Bx1Ta1Ln9bp8ZNq2umlXmXERA84DCbsJ6cvbZiMgtKJeW9Ur02hRixJAeC6oKcE4kmnHM5VZrkmHaiL0ouHmBq-I8Mvy5_QemqvxDw0_A3vq8";
+        string token = "sl.BAdkrj24ieAEBrtdqTRkScMWRFFwmjeogbMy-Q5mM8ykcpKKKe982sXtQpfEWnpv2dHJbhhsYUGanmu-WG83IvS3_sGqbP44RvKTtKIrI6aTB6MDHGCHSRfj10ljAaIBE3eIc6g";
 
         public async Task<IActionResult> FolderList()
         {
@@ -180,6 +180,10 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
             //return File(memory, GetMimeTypes()[ext], Path.GetFileName(path));
             return File(memory, GetMIMEType(path), Path.GetFileName(path));
         }
+
+
+
+
 
 
 
@@ -568,10 +572,8 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
                 }
                 count = count + 1;
             }
-
-
-
             model.countFile = count;
+            DeleteUploadedFileFromFolder();
             return Json(model);
         }
 
@@ -604,6 +606,27 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
             model.imageUrlList = dataList;
             return model.imageUrlList;
         }
+
+
+        public int DeleteUploadedFileFromFolder()
+        {
+            int response =0;
+            System.IO.DirectoryInfo di = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\DownLoad"));
+
+            foreach (FileInfo file in di.GetFiles())
+            {
+                if (file.Exists)
+                {
+                    file.Delete();
+                    response += 1;
+                }
+
+            }
+
+            return response;
+        }
+
+
 
 
         //private async Task Upload(string localPath, string remotePath)

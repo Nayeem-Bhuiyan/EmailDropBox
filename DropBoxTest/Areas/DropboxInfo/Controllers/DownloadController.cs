@@ -22,29 +22,35 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
             _environment = environment;
         }
 
-        string token = "sl.BAY-HlNdir1odmAN2aQPjVsYs_Bx1Ta1Ln9bp8ZNq2umlXmXERA84DCbsJ6cvbZiMgtKJeW9Ur02hRixJAeC6oKcE4kmnHM5VZrkmHaiL0ouHmBq-I8Mvy5_QemqvxDw0_A3vq8";
+        string token = "sl.BAdkrj24ieAEBrtdqTRkScMWRFFwmjeogbMy-Q5mM8ykcpKKKe982sXtQpfEWnpv2dHJbhhsYUGanmu-WG83IvS3_sGqbP44RvKTtKIrI6aTB6MDHGCHSRfj10ljAaIBE3eIc6g";
 
         public async Task<IActionResult> Index()
         {
-            string localDownloadPath = @"D:\Nayeem\Project_Dropbox\DropBoxTest\DropBoxTest\wwwroot\DownLoad";
+            //string localDownloadPath = @"D:\Nayeem\Project_Dropbox\DropBoxTest\DropBoxTest\wwwroot\DownLoad";
 
 
-            var list = await new dropboxApi.DropboxClient(token).Files.ListFolderAsync(string.Empty, true);
-            var folders = list.Entries.Where(x => x.IsFolder);
-            foreach (var folder in folders)
-            {
-                await DownloadFolder("https://www.dropbox.com/home" + folder.PathLower, localDownloadPath);
+            //var list = await new dropboxApi.DropboxClient(token).Files.ListFolderAsync(string.Empty, true);
+            //var folders = list.Entries.Where(x => x.IsFolder);
+            //foreach (var folder in folders)
+            //{
+            //    await DownloadFolder("https://www.dropbox.com/home" + folder.PathLower, localDownloadPath);
 
-            }
-
-
-         
-
+            //}
 
 
 
             return View();
         }
+
+
+
+
+
+
+
+
+
+
 
 
         //svcUri=dropbox folder url
@@ -77,6 +83,9 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
         {
             try
             {
+
+         
+
                 dropboxApi.Sharing.ListSharedLinksResult result = null;
 
                 using (var client = new dropboxApi.DropboxClient(token))
