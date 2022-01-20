@@ -60,10 +60,13 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
             foreach (var folder in folders)
             {
-                response = await _dropboxService.DownloadFolder(folder.PathLower, localDownloadPath);
+                response = await _dropboxService.DownloadFolder(AppRootUri, localDownloadPath);
 
             }
 
+            response = await _dropboxService.DownloadFolder(AppRootUri, localDownloadPath);
+
+            
             return Ok(response);
         }
 
@@ -79,12 +82,12 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
             var list = await new dropboxApi.DropboxClient(AccessToken).Files.ListFolderAsync(string.Empty, true);
             var folders = list.Entries.Where(x => x.IsFolder);
 
-            foreach (var folder in folders)
-            {
-                response = await _dropboxService.DownloadFolder(folder.PathLower, localDownloadPath);
+            //foreach (var folder in folders)
+            //{
+            //    response = await _dropboxService.DownloadFolder("/", localDownloadPath);
 
-            }
-
+            //}
+            response = await _dropboxService.DownloadFolder(AppRootUri, localDownloadPath);
             return Json(response);
         }
 

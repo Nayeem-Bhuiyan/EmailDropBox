@@ -68,8 +68,9 @@ namespace DropBoxTest.Services
                 xmlDoc.Load(uri);
                 return xmlDoc;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return null;
             }
         }
@@ -92,8 +93,9 @@ namespace DropBoxTest.Services
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return null;
             }
         }
@@ -122,8 +124,9 @@ namespace DropBoxTest.Services
 
                 return result.Links[0].Url;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return null;
             }
         }
@@ -147,8 +150,9 @@ namespace DropBoxTest.Services
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return null;
             }
         }
@@ -171,8 +175,9 @@ namespace DropBoxTest.Services
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return null;
             }
         }
@@ -196,8 +201,9 @@ namespace DropBoxTest.Services
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return null;
             }
         }
@@ -246,8 +252,9 @@ namespace DropBoxTest.Services
 
                 return uploadResults;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return null;
             }
         }
@@ -270,8 +277,9 @@ namespace DropBoxTest.Services
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return null;
             }
         }
@@ -298,8 +306,9 @@ namespace DropBoxTest.Services
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }
@@ -328,8 +337,9 @@ namespace DropBoxTest.Services
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }
