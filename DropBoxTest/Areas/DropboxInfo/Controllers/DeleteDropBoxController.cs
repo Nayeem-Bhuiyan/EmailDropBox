@@ -19,7 +19,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
         public async Task<dropboxApi.Files.DeleteResult> DeleteFileOrFolder()
         {
-            string svcUri = "/Profile";
+            string svcUri = "/Apps/FootWear/images(1).jpg";
             try
             {
                 dropboxApi.Files.DeleteResult result = null;
@@ -27,6 +27,7 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
                 using (var client = new dropboxApi.DropboxClient(token))
                 {
                     result = await client.Files.DeleteV2Async(svcUri);
+                    
                 }
 
                 return result;

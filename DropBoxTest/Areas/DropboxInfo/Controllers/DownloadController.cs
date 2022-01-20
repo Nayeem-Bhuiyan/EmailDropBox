@@ -26,19 +26,15 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
 
         public async Task<IActionResult> Index()
         {
-            //string localDownloadPath = @"D:\Nayeem\Project_Dropbox\DropBoxTest\DropBoxTest\wwwroot\DownLoad";
+            string localDownloadPath = @"D:\My Documents\Desktop\Download";
 
 
-            //var list = await new dropboxApi.DropboxClient(token).Files.ListFolderAsync(string.Empty, true);
-            //var folders = list.Entries.Where(x => x.IsFolder);
-            //foreach (var folder in folders)
-            //{
-            //    await DownloadFolder("https://www.dropbox.com/home" + folder.PathLower, localDownloadPath);
-
-            //}
-
-
-
+            var list = await new dropboxApi.DropboxClient(token).Files.ListFolderAsync(string.Empty, true);
+            var folders = list.Entries.Where(x => x.IsFolder);
+            foreach (var folder in folders)
+            {
+                await DownloadFolder(folder.PathLower, localDownloadPath);
+            }
             return View();
         }
 
@@ -78,6 +74,29 @@ namespace DropBoxTest.Areas.DropboxInfo.Controllers
                 return false;
             }
         }
+
+        public async Task<bool> DownloadFile(string svcFileUri, string localFilePath)
+        {
+            try
+            {
+                using (var client = new dropboxApi.DropboxClient(token))
+                {
+                    var result = await client.Files.DownloadAsync(svcFileUri);
+                    using (Stream sourceStream = await result.GetContentAsStreamAsync())
+                    using (FileStream source =System.IO.File.Open(localFilePath, FileMode.Create))
+                    {
+                        await sourceStream.CopyToAsync(source);
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
 
         public async Task<string> GetFolderSharedLink(string svcUri)
         {
