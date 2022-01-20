@@ -128,6 +128,9 @@ namespace DropBoxTest
 
             #region UserService
             //services.AddScoped<IUserInfoes, UserInfoes>();
+            #endregion 
+            #region DropboxManager
+            services.AddScoped<IDropboxManager, DropboxManager>();
             #endregion
 
 
@@ -197,6 +200,8 @@ namespace DropBoxTest
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+
 
         }
     }
