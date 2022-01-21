@@ -39,7 +39,6 @@ namespace DropBoxTest.Services
         /// <summary>
         /// Returns access token
         /// </summary>
-        /// string AccessToken = _IConfiguration.GetSection("DropBoxAccessToken").Value;
         //public static string AccessToken
         //{
         //    get
