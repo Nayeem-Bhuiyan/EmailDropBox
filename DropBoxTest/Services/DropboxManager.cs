@@ -68,9 +68,10 @@ namespace DropBoxTest.Services
         /// <returns>Null if not exists or failed to load</returns>
         public XmlDocument LoadXml(string svcUri)
         {
+            string AccessToken = _IConfiguration.GetSection("DropBoxAccessToken").Value;
             svcUri = svcUri.ToUri();
             XmlDocument xmlDoc = new XmlDocument();
-            string uri = new Uri(string.Format("https://content.dropboxapi.com/2/files/download?authorization=Bearer%20{1}&arg=%7B%22path%22%3A%22{0}%22%7D", svcUri, ACCESS_TOKEN)).AbsoluteUri;
+            string uri = new Uri(string.Format("https://content.dropboxapi.com/2/files/download?authorization=Bearer%20{1}&arg=%7B%22path%22%3A%22{0}%22%7D", svcUri, AccessToken)).AbsoluteUri;
 
             try
             {
