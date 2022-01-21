@@ -8,11 +8,20 @@ using System.IO;
 using System.Net;
 using System.Xml;
 using dropboxApi = global::Dropbox.Api;
+using Microsoft.Extensions.Configuration;
+
 namespace DropBoxTest.Services
 {
     public class DropboxManager : IDropboxManager
     {
-        private const string ACCESS_TOKEN = "sl.BAd1K5QvO5HZe1MPXqw76INFqzhaN0JkS7Gtk_OoxnSgQtDO9pM9jwBlkuv1cdWN39T4pjbYVtpUJTYy-iosjbOnCh6quBJOOzbABcDs9gqSy8iM4FbntRlngJZVIRznXzeVOrE"; // Set your access token here (it is quite long string)
+
+        private IConfiguration _IConfiguration;
+        public DropboxManager(IConfiguration IConfiguration)
+        {
+            _IConfiguration = IConfiguration;
+        }
+
+
         private const string APP_ROOT_URI = "/IngenStudioAppFolder"; // Set your application root folder name
 
         /// <summary>
@@ -30,13 +39,14 @@ namespace DropBoxTest.Services
         /// <summary>
         /// Returns access token
         /// </summary>
-        public static string AccessToken
-        {
-            get
-            {
-                return ACCESS_TOKEN;
-            }
-        }
+        /// string AccessToken = _IConfiguration.GetSection("DropBoxAccessToken").Value;
+        //public static string AccessToken
+        //{
+        //    get
+        //    {
+        //        return ACCESS_TOKEN;
+        //    }
+        //}
 
         /// <summary>
         /// The root path where DwgOperations app files are stored.
@@ -82,8 +92,10 @@ namespace DropBoxTest.Services
         /// <returns>Result that contains list with file metadata</returns>
         public async Task<dropboxApi.Files.ListFolderResult> GetFilesInFolder(string svcFolderUri)
         {
+
             try
             {
+                string AccessToken = _IConfiguration.GetSection("DropBoxAccessToken").Value;
                 dropboxApi.Files.ListFolderResult result = null;
 
                 using (var client = new dropboxApi.DropboxClient(AccessToken))
@@ -110,6 +122,7 @@ namespace DropBoxTest.Services
         {
             try
             {
+                string AccessToken = _IConfiguration.GetSection("DropBoxAccessToken").Value;
                 dropboxApi.Sharing.ListSharedLinksResult result = null;
 
                 using (var client = new dropboxApi.DropboxClient(AccessToken))
@@ -141,6 +154,7 @@ namespace DropBoxTest.Services
         {
             try
             {
+                string AccessToken = _IConfiguration.GetSection("DropBoxAccessToken").Value;
                 dropboxApi.Files.CreateFolderResult result = null;
 
                 using (var client = new dropboxApi.DropboxClient(AccessToken))
@@ -166,6 +180,7 @@ namespace DropBoxTest.Services
         {
             try
             {
+                string AccessToken = _IConfiguration.GetSection("DropBoxAccessToken").Value;
                 dropboxApi.Files.DeleteResult result = null;
 
                 using (var client = new dropboxApi.DropboxClient(AccessToken))
@@ -192,6 +207,7 @@ namespace DropBoxTest.Services
         {
             try
             {
+                string AccessToken = _IConfiguration.GetSection("DropBoxAccessToken").Value;
                 dropboxApi.Files.RelocationResult result = null;
 
                 using (var client = new dropboxApi.DropboxClient(AccessToken))
@@ -221,6 +237,7 @@ namespace DropBoxTest.Services
         /// <returns>List with uploaded file metadata</returns>
         public async Task<List<dropboxApi.Files.FileMetadata>> UploadFiles(string svcPath, string localDirPath, List<string> filePaths)
         {
+            string AccessToken = _IConfiguration.GetSection("DropBoxAccessToken").Value;
             var uploadResults = new List<dropboxApi.Files.FileMetadata>();
 
             try
@@ -268,6 +285,7 @@ namespace DropBoxTest.Services
         {
             try
             {
+                string AccessToken = _IConfiguration.GetSection("DropBoxAccessToken").Value;
                 dropboxApi.Files.Metadata result = null;
 
                 using (var client = new dropboxApi.DropboxClient(AccessToken))
@@ -294,6 +312,7 @@ namespace DropBoxTest.Services
         {
             try
             {
+                string AccessToken = _IConfiguration.GetSection("DropBoxAccessToken").Value;
                 using (var client = new dropboxApi.DropboxClient(AccessToken))
                 {
                     var result = await client.Files.DownloadAsync(svcFileUri);
@@ -323,6 +342,7 @@ namespace DropBoxTest.Services
         {
             try
             {
+                string AccessToken = _IConfiguration.GetSection("DropBoxAccessToken").Value;
                 string sharedFolderUrl = await this.GetFolderSharedLink(svcUri);
                 string fullPath = Path.Combine(localFilePath, $"{Path.GetFileName(svcUri)}.zip");
 
@@ -352,6 +372,7 @@ namespace DropBoxTest.Services
         public async Task Download(List<FileRequestInfo> files, Action<bool, bool> CompletedCallback)
         {
             // Resets download files count
+            string AccessToken = _IConfiguration.GetSection("DropBoxAccessToken").Value;
             FilesToDownloadCount = files.Count;
 
             foreach (var item in files)
